@@ -1,34 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Force-Directed Layout</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <link type="text/css" rel="stylesheet" href="force.css"/>
-  
-  <script>
-  var vis=false;
-  </script>
-  
+    <link type="text/css" rel="stylesheet" href="force.css" />
+
+    <script>
+        var vis = false;
+
+    </script>
 
 
-  </head>
-  <body>
 
-<button type="button" 
-onclick="$('.labels').css({'visibility': 'visible'});">
-On</button>
+</head>
 
-    <button type="button" 
-onclick="$('.labels').css({'visibility': 'hidden'});">
-Off</button>
+<body>
 
+    <button type="button" onclick="$('.labels').css({'visibility': 'visible'});">
+        On</button>
+
+    <button type="button" onclick="$('.labels').css({'visibility': 'hidden'});">
+        Off</button>
+
+    <button type="button" onclick="$('.1970').css({'visibility': 'hidden'}); /*$('.node').css({'visibility': 'visible'});*/">
+        Forget about 1970</button>
+    <button type="button" onclick="$('.1970').css({'visibility': 'visible'});">
+        Glorious 1970's</button>
 
     <div id="chart"></div>
     <script type="text/javascript" src="force.js"></script>
-    <div id="appliedFilters">XXX</div>
-    
-    
-  </body>
-</html>
 
+</body>
+
+</html>

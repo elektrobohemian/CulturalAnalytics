@@ -1,6 +1,6 @@
-var w = 3000,
-    h = 3000,
-    fill = d3.scale.category20();
+var w = 3000, //3000,
+    h = 3000 //3000,
+fill = d3.scale.category20();
 
 var vis = d3.select("#chart")
     .append("svg:svg")
@@ -16,10 +16,24 @@ d3.json("force.json", function (json) {
         .size([w, h])
         .start();
 
+    // http://bl.ocks.org/mbostock/3750558 "This example demonstrates how to prevent D3’s force layout from moving nodes that have been repositioned by the user."
+    var drag = force.drag()
+        .on("dragstart", dragstart);
+
+    function dragstart(d) {
+        d3.select(this).classed("fixed", d.fixed = true);
+    }
+
     var link = vis.selectAll("line.link")
         .data(json.links)
         .enter().append("svg:line")
-        .attr("class", "link")
+        //.attr("class", "link")
+        .attr("class", function (d) {
+            return "link " + d.decade;
+        })
+        .attr("id", function (d) {
+            return d.year;
+        })
         .style("stroke-width", function (d) {
             return Math.sqrt(d.value);
         })
@@ -39,7 +53,13 @@ d3.json("force.json", function (json) {
     var g = vis.selectAll("circle.node")
         .data(json.nodes)
         .enter().append("svg:g")
-        .attr("class", "g.nodegroup");
+        //.attr("class", "g.nodegroup")
+        .attr("class", function (d) {
+            return "g.nodegroup " + d.decade;
+        })
+        .attr("id", function (d) {
+            return d.year;
+        });
 
     var node = g.append("svg:circle")
         .attr("class", "node")
@@ -122,6 +142,7 @@ d3.json("force.json", function (json) {
             .attr("y2", function (d) {
                 return d.target.y;
             });
+
 
         node.attr("cx", function (d) {
                 return d.x;
