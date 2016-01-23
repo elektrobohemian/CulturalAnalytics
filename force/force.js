@@ -80,7 +80,10 @@ d3.json("force.json", function (json) {
         .call(force.drag);
 
     var labels = g.append("text")
-        .attr("class", "labels")
+        //.attr("class", "labels")
+        .attr("class", function (d) {
+            return "labels " + d.decade;
+        })
         .text(function (d) {
             if (d.group == 2) return d.name; // group 2 zeigt Superheldenstatus
         })

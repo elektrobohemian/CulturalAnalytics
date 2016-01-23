@@ -8,26 +8,64 @@
     <link type="text/css" rel="stylesheet" href="force.css" />
 
     <script>
-        var vis = false;
+        var visibleLabels = true;
+
+        var dict = {};
+        dict[1900] = true;
+        dict[1910] = true;
+        dict[1920] = true;
+        dict[1930] = true;
+        dict[1940] = true;
+        dict[1950] = true;
+        dict[1960] = true;
+        dict[1970] = true;
+        dict[1980] = true;
+        dict[1990] = true;
+        dict[2000] = true;
+        dict[2010] = true;
+        dict[2020] = true;
+
+        function toggleVisibilityPerDecade(dec) {
+            dict[dec] == true ? eval("$('." + dec + "').css({'visibility': 'hidden'})") : eval("$('." + dec + "').css({'visibility': 'visible'})");
+
+            if (dict[dec] && visibleLabels) {
+                eval("$('." + dec + ".labels').css({'visibility': 'hidden'})");
+            } else if (!dict[dec] && visibleLabels) {
+                eval("$('." + dec + ".labels').css({'visibility': 'visible'})");
+            } else if (!dict[dec] && !visibleLabels) {
+                eval("$('." + dec + ".labels').css({'visibility': 'hidden'})");
+            }
+
+            dict[dec] = !dict[dec];
+        }
 
     </script>
-
-
-
 </head>
 
 <body>
 
-    <button type="button" onclick="$('.labels').css({'visibility': 'visible'});">
+    <button type="button" onclick="toggleVisibilityPerDecade(1900);">1900</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1910);">1910</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1920);">1920</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1930);">1930</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1940);">1940</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1950);">1950</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1960);">1960</button>
+
+    <button type="button" onclick="toggleVisibilityPerDecade(1970);">1970</button>
+    <!--<button type="button" onclick="d1970==true?$('.1970').css({'visibility': 'hidden'}):$('.1970').css({'visibility': 'visible'}); d1970=!d1970;">1970_ORIG</button>-->
+
+    <button type="button" onclick="toggleVisibilityPerDecade(1980);">1980</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1990);">1990</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(2000);">2000</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(2010);">2010</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(2020);">Unknown first appearance</button>
+
+    <button type="button" onclick="$('.labels').css({'visibility': 'visible'}); visibleLabels=true;">
         On</button>
 
-    <button type="button" onclick="$('.labels').css({'visibility': 'hidden'});">
+    <button type="button" onclick="$('.labels').css({'visibility': 'hidden'}); visibleLabels=false;">
         Off</button>
-
-    <button type="button" onclick="$('.1970').css({'visibility': 'hidden'}); /*$('.node').css({'visibility': 'visible'});*/">
-        Forget about 1970</button>
-    <button type="button" onclick="$('.1970').css({'visibility': 'visible'});">
-        Glorious 1970's</button>
 
     <div id="chart"></div>
     <script type="text/javascript" src="force.js"></script>
