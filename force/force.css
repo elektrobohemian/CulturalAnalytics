@@ -2,6 +2,10 @@
 	background-color: #000000;
 }*/
 
+h1 {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+}
 circle.node {
     stroke: #fff;
     stroke-width: 1.5px;
@@ -11,11 +15,32 @@ line.link {
     stroke-opacity: .6;
 }
 text.labels {
-    font-family: sans-serif;
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
     font-size: 11px;
     /*visibility: hidden;*/
     /*visible*/
 }
-#1970 {
-    visibility: visible;
+text.barlabels {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+    color: black;
+    /*visibility: hidden;*/
+    /*visible*/
+}
+button {
+    background-color: #FFFFFF;
+    /* Green */
+    border: none;
+    color: #999;
+    /*padding: 15px 32px;*/
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 16px;
+}
+button:hover {
+    color: #000000;
 }

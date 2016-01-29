@@ -3,4 +3,4 @@
 *.pickle
 img.dc_chars/
 img.marvel_chars/
-tmp/
+tmp*/

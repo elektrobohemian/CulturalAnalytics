@@ -39,10 +39,69 @@
             dict[dec] = !dict[dec];
         }
 
+        function showAll() {
+            dict[1900] = true;
+            dict[1910] = true;
+            dict[1920] = true;
+            dict[1930] = true;
+            dict[1940] = true;
+            dict[1950] = true;
+            dict[1960] = true;
+            dict[1970] = true;
+            dict[1980] = true;
+            dict[1990] = true;
+            dict[2000] = true;
+            dict[2010] = true;
+            dict[2020] = true;
+
+            $('.1900').css({
+                'visibility': 'visible'
+            });
+            $('.1910').css({
+                'visibility': 'visible'
+            });
+            $('.1920').css({
+                'visibility': 'visible'
+            });
+            $('.1930').css({
+                'visibility': 'visible'
+            });
+            $('.1940').css({
+                'visibility': 'visible'
+            });
+            $('.1950').css({
+                'visibility': 'visible'
+            });
+            $('.1960').css({
+                'visibility': 'visible'
+            });
+            $('.1970').css({
+                'visibility': 'visible'
+            });
+            $('.1980').css({
+                'visibility': 'visible'
+            });
+            $('.1990').css({
+                'visibility': 'visible'
+            });
+            $('.2000').css({
+                'visibility': 'visible'
+            });
+            $('.2010').css({
+                'visibility': 'visible'
+            });
+            $('.2020').css({
+                'visibility': 'visible'
+            });
+        }
+
     </script>
 </head>
 
 <body>
+
+    <h1>Abilities
+    <button type="button" onclick="showAll(); renderNetworkGraph('force.json');">All</button>
 
     <button type="button" onclick="toggleVisibilityPerDecade(1900);">1900</button>
     <button type="button" onclick="toggleVisibilityPerDecade(1910);">1910</button>
@@ -66,9 +125,15 @@
 
     <button type="button" onclick="$('.labels').css({'visibility': 'hidden'}); visibleLabels=false;">
         Off</button>
+        </h1>
+
+    <div id="barchart"></div>
+    <script type="text/javascript" src="barchart.js"></script>
 
     <div id="chart"></div>
     <script type="text/javascript" src="force.js"></script>
+
+
 
 </body>
 
