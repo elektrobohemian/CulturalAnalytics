@@ -101,7 +101,7 @@
 <body>
 
     <h1>Abilities
-    <button type="button" onclick="showAll(); renderNetworkGraph('force.json');">All</button>
+    <button type="button" onclick="showAll(); renderNetworkGraph('force_dc_abilities.json');">All</button>
 
     <button type="button" onclick="toggleVisibilityPerDecade(1900);">1900</button>
     <button type="button" onclick="toggleVisibilityPerDecade(1910);">1910</button>
@@ -125,9 +125,11 @@
 
     <button type="button" onclick="$('.labels').css({'visibility': 'hidden'}); visibleLabels=false;">
         Off</button>
+        <br />
+        <div id="barchart"></div>
         </h1>
 
-    <div id="barchart"></div>
+
     <script type="text/javascript" src="barchart.js"></script>
 
     <div id="chart"></div>

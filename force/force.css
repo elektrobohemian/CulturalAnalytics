@@ -5,6 +5,11 @@
 h1 {
     font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
     font-weight: lighter;
+    position: fixed;
+}
+#chart {
+    padding-top: 50px;
+    overflow: auto;
 }
 circle.node {
     stroke: #fff;
