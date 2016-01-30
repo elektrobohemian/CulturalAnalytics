@@ -176,4 +176,4 @@ function renderNetworkGraph(jsonFileName) {
     });
 };
 
-renderNetworkGraph("force.json");
+renderNetworkGraph(pathPrefix + "force.json");

@@ -1,7 +1,7 @@
 var barchartData;
 
 //http://learnjsdata.com/read_data.html
-d3.csv("decadeStats.csv", function (data) {
+d3.csv(pathPrefix + "decadeStats.csv", function (data) {
     barchartData = data;
 
     var w = 200;
@@ -59,6 +59,6 @@ d3.csv("decadeStats.csv", function (data) {
         .attr("height", h / barchartData.length - barPadding)
         .on("click", function (d, i) {
             //toggleVisibilityPerDecade(d.Decade);
-            renderNetworkGraph(d.Decade + ".json");
+            renderNetworkGraph(pathPrefix + d.Decade + ".json");
         });
 }); // END d3.csv
