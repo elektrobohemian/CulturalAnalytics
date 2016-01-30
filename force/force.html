@@ -96,6 +96,43 @@
             });
         }
 
+        function saveSVG() {
+            var html = d3.select("#chart > svg")
+                .attr("version", 1.1)
+                .attr("xmlns", "http://www.w3.org/2000/svg")
+                .node().parentNode.innerHTML;
+
+            //console.log(html);
+            var imgsrc = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(html)));
+            var imgraw = btoa(unescape(encodeURIComponent(html)));
+            //unescape(encodeURIComponent()) because of UTF-8; https://developer.mozilla.org/de/docs/Web/API/WindowBase64/btoa
+            var img = '<img src="' + imgsrc + '">';
+            // uncomment next line to display original SVG
+            //d3.select("#svgdataurl").html(img);
+
+            var canvas = document.querySelector("canvas"),
+                context = canvas.getContext("2d");
+
+            var image = new Image;
+            image.src = imgsrc;
+
+            image.onload = function() {
+                context.drawImage(image, 0, 0);
+
+                var canvasdata = canvas.toDataURL("image/png");
+
+                var pngimg = '<img src="' + canvasdata + '">';
+                d3.select("#pngdataurl").html(pngimg);
+
+                var a = document.createElement("a");
+                a.download = "sample.png";
+                a.href = canvasdata;
+                a.click();
+
+                d3.select("#pngdataurl").selectAll("*").remove();
+            };
+        }
+
     </script>
 </head>
 
@@ -120,6 +157,8 @@
     <button type="button" onclick="toggleVisibilityPerDecade(2000);">2000</button>
     <button type="button" onclick="toggleVisibilityPerDecade(2010);">2010</button>
     <button type="button" onclick="toggleVisibilityPerDecade(2020);">Unknown first appearance</button>
+        
+    <button type="button" onclick="saveSVG();">Save</button>
 
     <button type="button" onclick="$('.labels').css({'visibility': 'visible'}); visibleLabels=true;">
         On</button>
@@ -130,13 +169,17 @@
         <div id="barchart"></div>
         </h1>
 
-
-    <script type="text/javascript" src="barchart.js"></script>
-
     <div id="chart"></div>
     <script type="text/javascript" src="force.js"></script>
 
+    <script type="text/javascript" src="barchart.js"></script>
 
+
+
+    <!-- SVG save stuff-->
+    <div id="svgdataurl"></div>
+    <div id="pngdataurl"></div>
+    <canvas width="3000" height="3000" />
 
 </body>
 
