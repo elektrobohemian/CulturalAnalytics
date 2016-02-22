@@ -5,3 +5,6 @@
 img.dc_chars/
 img.marvel_chars/
 tmp*/
+featureFiles/
+html*/
+*.gml
