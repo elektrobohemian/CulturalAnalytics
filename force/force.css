@@ -15,6 +15,11 @@ circle.node {
     stroke: #fff;
     stroke-width: 1.5px;
 }
+circle.nodeInvisible {
+    stroke: #fff;
+    stroke-width: 1.5px;
+    visibility: hidden;
+}
 line.link {
     stroke: #999;
     stroke-opacity: .6;
@@ -23,6 +28,13 @@ text.labels {
     font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
     font-weight: lighter;
     font-size: 11px;
+    /*visibility: hidden;*/
+    /*visible*/
+}
+text.centurylabels {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 30px;
     /*visibility: hidden;*/
     /*visible*/
 }
