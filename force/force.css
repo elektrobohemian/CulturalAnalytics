@@ -7,32 +7,9 @@ h1 {
     font-weight: lighter;
     position: fixed;
 }
-#chart {
-    padding-top: 50px;
-    overflow: auto;
-}
-circle.node {
-    stroke: #fff;
-    stroke-width: 1.5px;
-}
-line.link {
-    stroke: #999;
-    stroke-opacity: .6;
-}
-text.labels {
+h2 {
     font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
     font-weight: lighter;
-    font-size: 11px;
-    /*visibility: hidden;*/
-    /*visible*/
-}
-text.barlabels {
-    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
-    font-weight: lighter;
-    font-size: 11px;
-    color: black;
-    /*visibility: hidden;*/
-    /*visible*/
 }
 button {
     background-color: #FFFFFF;
@@ -48,4 +25,159 @@ button {
 }
 button:hover {
     color: #000000;
+}
+p {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+}
+
+/*
+jQuery UI 
+*/
+
+.transparent-dialog {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.transparent-dialog .ui-widget-content {
+    background: transparent;
+}
+
+/*
+SVG
+*/
+
+#chart {
+    padding-top: 50px;
+    overflow: auto;
+}
+circle.node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+circle.nodeInvisible {
+    stroke: #fff;
+    stroke-width: 1.5px;
+    visibility: hidden;
+}
+line.link {
+    stroke: #999;
+    stroke-opacity: .6;
+}
+
+/*
+ Node comparison IDs
+
+kuler color fitting to #1660A7
+#15334F
+#B4322A
+#6A7404
+#DFF314
+*/
+
+line.edgeLink {
+    stroke: #1660A7; // node color determined by OS X color picker
+    stroke-opacity: .6;
+    stroke-dasharray: 5, 2, 5, 2;
+}
+line.edgeLink_title {
+    stroke: #000000;
+    stroke-opacity: .6;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_source {
+    stroke: #bee;
+    stroke-opacity: .6;
+    stroke-dasharray: 34, 34;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_creator {
+    stroke: #15334F;
+    stroke-opacity: .6;
+    stroke-dasharray: 28, 28;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_publisher {
+    stroke: #DFF314;
+    stroke-opacity: .6;
+    stroke-dasharray: 22, 22;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_location {
+    stroke: #B4322A;
+    stroke-opacity: .6;
+    stroke-dasharray: 16, 16;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_mediatype {
+    stroke: #1660A7;
+    stroke-opacity: .6;
+    stroke-dasharray: 10, 10;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_subject {
+    stroke: #6A7404;
+    stroke-opacity: .6;
+    stroke-dasharray: 4, 4;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+
+/*
+Legend labels
+*/
+
+span.legend_title {
+    color: #000000;
+}
+span.legend_creator {
+    color: #15334F;
+}
+span.legend_publisher {
+    color: #DFF314;
+}
+span.legend_location {
+    color: #B4322A;
+}
+span.legend_mediatype {
+    color: #1660A7;
+}
+span.legend_subject {
+    color: #6A7404;
+}
+span.legend_source {
+    color: #bee;
+}
+
+/*
+ SVG labels
+*/
+
+text.labels {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+    /*visibility: hidden;*/
+    /*visible*/
+}
+text.centurylabels {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 30px;
+    /*visibility: hidden;*/
+    /*visible*/
+}
+text.barlabels {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+    color: black;
+    /*visibility: hidden;*/
+    /*visible*/
 }
