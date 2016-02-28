@@ -16,15 +16,18 @@
 <body>
 
     <h1>Characteristic Media per Century
-    <button type="button" onclick="renderNetworkGraph(overviewJSONpath);">Display all</button>
+    <button type="button" onclick="backToOverview();"> &#8592; Back to overview</button>
         </h1>
     <div id="chart"></div>
 
     <div id="dialog" title="Details">
-        <!-- former class of span was: "ui-icon ui-icon-alert" -->
-        <span class="" style="float:left; margin:0 7px 20px 0;"></span>
+        <!-- <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span> -->
         <div id="myDialogText"></div>
         <ul id="linkList"></ul>
+    </div>
+
+    <div id="dialogComp" title="Media Comparison">
+        <div id="dlgTextComp"></div>
     </div>
 
     <script type="text/javascript" src="forceCentury.js"></script>
@@ -36,7 +39,22 @@
         $("#dialog").dialog({
             resizable: false,
             autoOpen: false,
-            height: 470,
+            height: 490,
+            modal: true,
+            dialogClass: 'transparent-dialog',
+            buttons: {
+                "Ok": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    $(function() {
+        $("#dialogComp").dialog({
+            resizable: false,
+            autoOpen: false,
+            height: 200,
             modal: true,
             buttons: {
                 "Ok": function() {
@@ -47,10 +65,10 @@
     });
 
     // Link to open the dialog
-    $("#dialog-link").click(function(event) {
+    /*$("#dialog-link").click(function(event) {
         $("#dialog").dialog("open");
         event.preventDefault();
-    });
+    });*/
 
 </script>
 

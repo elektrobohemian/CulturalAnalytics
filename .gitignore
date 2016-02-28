@@ -10,3 +10,5 @@ html*/
 *.gml
 */jquery*/
 clusters/
+pickle_bak/
+*.pickle_bak
