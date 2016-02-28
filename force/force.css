@@ -213,3 +213,11 @@ text.barlabels {
     /*visibility: hidden;*/
     /*visible*/
 }
+
+/*
+Google maps
+*/
+
+#map {
+    height: 100%;
+}
