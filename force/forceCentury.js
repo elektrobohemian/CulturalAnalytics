@@ -1,3 +1,12 @@
+/*
+Nice unicode characters:
+&#8226; bullet
+&#8227; triangular bullet
+&#8718; black box (QED)
+&#9210; black circle (record)
+&#9209; black square (stop)
+&#9608; full black block
+*/
 // dimensions of the SVG canvas
 var w = 1600, //3000,
     h = 1100 //3000,
@@ -12,6 +21,9 @@ var inClusterInspection = false;
 // a "dictionary" containing related nodes with respect to the current node
 var relatedNodes = {};
 
+// display settings object for comparison edges
+var displayComparisonEdge = {};
+
 // the force layout
 var force;
 
@@ -22,12 +34,12 @@ var metsLink = "http://digital.staatsbibliothek-berlin.de/metsresolver/?PPN=";
 var ppnLink = "http://stabikat.de/DB=1/PPN?PPN=";
 var oaiGetRecordLink = "http://digital.staatsbibliothek-berlin.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=oai:digital.staatsbibliothek-berlin.de:";
 var oaiGetRecordLink_DC = "http://digital.staatsbibliothek-berlin.de/oai/?verb=GetRecord&metadataPrefix=oai_dc&identifier=oai:digital.staatsbibliothek-berlin.de:";
-
-
-/* OLD comparison of two elements
-var queue = [];
-var queueData = [];
-*/
+var stabikatSearchLink = "http://stabikat.de/DB=1/SET=1/TTL=1/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM=";
+var stabikatPlusLink = "http://eds.b.ebscohost.com/eds/results?vid=0&hid=113&bdata=JmNsaTA9RlQxJmNsdjA9WSZsYW5nPWRlJnR5cGU9MCZzaXRlPWVkcy1saXZl&bquery="
+    /* OLD comparison of two elements
+    var queue = [];
+    var queueData = [];
+    */
 var queue = null;
 var queueData = null;
 
@@ -42,6 +54,9 @@ document.body.addEventListener('keydown', function (e) {
         createDownloadWindow();
     } else if (k == 67) { // 'c'
         drawSimilarityEdges();
+    } else if (k == 68) { // 'd'
+        if (queueData != null)
+            displayDetailDialog(queueData, 0);
     } else if (k == 80) { // p
         force.stop();
     } else if (k == 83) { // s
@@ -49,6 +64,7 @@ document.body.addEventListener('keydown', function (e) {
     }
     console.log(k);
 });
+
 
 function drawSimilarityEdges() {
     // stop the animation in order to draw the lines without the need for updating them continuously
@@ -60,18 +76,6 @@ function drawSimilarityEdges() {
 
     vis = d3.select("#chart svg");
 
-    /* quadratic bezier curve
-    offX = queueData[0].x + 100;
-    offY = queueData[0].y + 50;
-    vis.append("svg:path")
-        .attr("d", "M" + queueData[0].x + " " + queueData[0].y + " Q " + offX + " " + offY + ", " + queueData[1].x + " " + queueData[1].y)
-        .attr("id", "compareEdge")
-        .attr("fill", "transparent")
-        .attr("stroke", "black")
-        .style("stroke-width", 2);
-    console.log(queueData[0].x + 10)*/
-
-
     d3.selectAll("image").each(function (d) {
         Object.keys(d).forEach(function (key, index) {
             // key: the name of the object key
@@ -79,7 +83,7 @@ function drawSimilarityEdges() {
             // type, weight, fixed are ignored
             if (key != "type" && key != "weight" && key != "fixed" && key != "century") {
                 if (queueData != null) {
-                    if (eval("queueData." + key) == eval("d." + key)) {
+                    if (eval("queueData." + key) == eval("d." + key) && displayComparisonEdge[key] == "on") {
 
                         vis.append("svg:line")
                             //.attr("class", "link")
@@ -183,6 +187,91 @@ function cleanUp(rawStr) {
         });
 }
 
+function displaySettingsDialog() {
+    sample = {
+        "publisher": "Drucker des Bollanus",
+        //"imagePath": "PPN788641328",
+        //"century": 14,
+        //"name": "PPN788641328",
+        "title": "De conceptione Beatae Virginis Mariae",
+        //"locationRaw": "Erfurt",
+        "creator": "Bollanus, Dominicus",
+        "mediatype": "Monograph",
+        //"cluster": "10",
+        "source": "Bollanus, Dominicus: De conceptione Beatae Virginis Mariae. Erfurt  Berlin 1486",
+        "dateClean": "1486",
+        "alternative": "nan",
+        "subject": "Historische Drucke",
+        //"type": "image",
+        //"id": "PPN788641328",
+        "location": "Erfurt"
+    }
+
+    $("#dlgSettingsText").empty();
+
+    Object.keys(displayComparisonEdge).forEach(function (key, index) {
+        if (key != "id" && key != "lat" && key != "lng" && key != "cluster" && key != "type" && key != "imagePath" && key != "century" && key != "name" && key != "locationRaw") {
+            $('#dlgSettingsText').append("<span class='legend_" + key + "'>&#9608;&nbsp;</span>" + '<input type="button" id="' + key + '" value="' + key + '" class="' + displayComparisonEdge[key] + '" onfocus="blur();" onclick="toggleButton(this); drawSimilarityEdges();" /> <br />');
+        }
+    });
+    //$('dlgSettingsText').append("<p>XYZ</p>");
+    $('#dialogSettings').dialog('open');
+}
+
+function toggleButton(el) {
+    if (el.className == "on") {
+        el.className = "off";
+        displayComparisonEdge[el.id] = "off";
+    } else {
+        el.className = "on";
+        displayComparisonEdge[el.id] = "on";
+    }
+    //console.log(el.className + " " + el.id);
+}
+
+function displayDetailDialog(d, i) {
+    //handle right click
+    queue = d.name;
+    queueData = d;
+
+    $("#myDialogText").empty();
+    $("#myDialogText").append("<img height='150px' src='" + imgDir + d.imagePath + ".jpg' /><br />");
+    if (!inClusterInspection)
+        $("#myDialogText").append("<button type='button' onfocus='blur();' onclick=\"inClusterInspection=true;queue = null;queueData = null; renderNetworkGraph('./clusters/" + d.century + "/" + d.cluster + ".json');$('#dialog').dialog('close');\">Inspect cluster</button>");
+    $("#myDialogText").append("&nbsp; <button type='button' onfocus='blur();' onclick=\"drawSimilarityEdges();\">Show relationships</button>");
+    $("#myDialogText").append("&nbsp; <button type='button' onfocus='blur();' onclick=\"createDownloadWindow();\">Create package</button>");
+
+
+    $("#myDialogText").append("<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>");
+    $("#myDialogText").append("<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " + cleanUp(d.creator) + "</p>");
+    $("#myDialogText").append("<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " + cleanUp(d.publisher) + "</p>");
+    $("#myDialogText").append("<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " + cleanUp(d.source) + "</p>");
+    $("#myDialogText").append("<p><span class='legend_mediatype'>&#9608;&nbsp;</span>Mediatype: " + cleanUp(d.mediatype) + " (<span class='legend_subject'>&#9608;&nbsp;</span>" + cleanUp(d.subject) + ")</p>");
+
+    // check if we can created a Google Maps link for the location
+    if (d.lat != "nan") {
+        mapURL = createGoogleMapsLink(d.lat, d.lng);
+        $("#myDialogText").append("<p><span class='legend_location'>&#9608;&nbsp;</span>Spatial: <a target='_blank' href='" + mapURL + "'>" + d.location + "</a> (" + cleanUp(d.locationRaw) + ")</p>");
+    } else {
+        $("#myDialogText").append("<p><span class='legend_location'>&#9608;&nbsp;</span>Spatial: <em>" + d.location + "</em> (" + cleanUp(d.locationRaw) + ")</p>");
+    }
+
+
+
+    //console.log(d.century + ": " + d.cluster);
+
+    $("#linkList").empty();
+    $("#linkList").append("<li><a target='_blank' href='" + sbbViewerLink + d.name + "'>View in SBB viewer</a></li>");
+    //$("#linkList").append("<li><a target='_blank' href='" + linkHead + d.name + linkTail + "'>View first scanned pagein full size</a></li>");
+    $("#linkList").append("<li><a target='_blank' href='" + metsLink + d.name + "'>METS/MODS metadata</a></li>");
+    $("#linkList").append("<li><a target='_blank' href='" + oaiGetRecordLink + d.name + "'>OAI-PMH METS metadata GetRecord</a></li>");
+    $("#linkList").append("<li><a target='_blank' href='" + ppnLink + d.name.replace("PPN", "") + "'>Show in catalog</a></li>");
+    $("#linkList").append("<li><a target='_blank' href='" + stabikatPlusLink + d.name.replace("PPN", "") + "'>Search for title in stabikat+ discovery system</a></li>");
+    $("#dialog").dialog("open");
+    //stop showing browser menu
+    d3.event.preventDefault();
+}
+
 // central D3 rendering function
 function renderNetworkGraph(jsonFileName) {
     imgDir = "../tmp/"
@@ -194,6 +283,11 @@ function renderNetworkGraph(jsonFileName) {
         .attr("height", h);
 
     d3.json(jsonFileName, function (json) {
+        // after the JSON has been loaded, create a settings object in order to steer the visibility of comparison edges
+        Object.keys(json.nodes[0]).forEach(function (key, index) {
+            displayComparisonEdge[key] = "on";
+        });
+
         force = d3.layout.force()
             .charge(-120)
             .linkDistance(100)
@@ -339,47 +433,7 @@ function renderNetworkGraph(jsonFileName) {
                 }
 
             })
-            .on("contextmenu", function (d, i) {
-                //handle right click
-                queue = d.name;
-                queueData = d;
-
-                $("#myDialogText").empty();
-                $("#myDialogText").append("<img height='150px' src='" + imgDir + d.imagePath + ".jpg' /><br />");
-                if (!inClusterInspection)
-                    $("#myDialogText").append("<button type='button' onclick=\"inClusterInspection=true;queue = null;queueData = null; renderNetworkGraph('./clusters/" + d.century + "/" + d.cluster + ".json');$('#dialog').dialog('close');\">Inspect cluster</button>");
-                $("#myDialogText").append("&nbsp; <button type='button' onclick=\"drawSimilarityEdges();\">Show relationships</button>");
-                $("#myDialogText").append("&nbsp; <button type='button' onclick=\"createDownloadWindow();\">Create package</button>");
-
-
-                $("#myDialogText").append("<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>");
-                $("#myDialogText").append("<p><span class='legend_creator'>&#8226;&nbsp;</span>Creator: " + cleanUp(d.creator) + "</p>");
-                $("#myDialogText").append("<p><span class='legend_publisher'>&#8226;&nbsp;</span>Publisher: " + cleanUp(d.publisher) + "</p>");
-                $("#myDialogText").append("<p><span class='legend_source'>&#8226;&nbsp;</span>Source: " + cleanUp(d.source) + "</p>");
-                $("#myDialogText").append("<p><span class='legend_mediatype'>&#8226;&nbsp;</span>Mediatype: " + cleanUp(d.mediatype) + " (<span class='legend_subject'>&#8226;&nbsp;</span>" + cleanUp(d.subject) + ")</p>");
-
-                // check if we can created a Google Maps link for the location
-                if (d.lat != "nan") {
-                    mapURL = createGoogleMapsLink(d.lat, d.lng);
-                    $("#myDialogText").append("<p><span class='legend_location'>&#8226;&nbsp;</span>Spatial: <a target='_blank' href='" + mapURL + "'>" + d.location + "</a> (" + cleanUp(d.locationRaw) + ")</p>");
-                } else {
-                    $("#myDialogText").append("<p><span class='legend_location'>&#8226;&nbsp;</span>Spatial: <em>" + d.location + "</em> (" + cleanUp(d.locationRaw) + ")</p>");
-                }
-
-
-
-                //console.log(d.century + ": " + d.cluster);
-
-                $("#linkList").empty();
-                $("#linkList").append("<li><a target='_blank' href='" + sbbViewerLink + d.name + "'>View in SBB viewer</a></li>");
-                //$("#linkList").append("<li><a target='_blank' href='" + linkHead + d.name + linkTail + "'>View first scanned pagein full size</a></li>");
-                $("#linkList").append("<li><a target='_blank' href='" + metsLink + d.name + "'>METS/MODS metadata</a></li>");
-                $("#linkList").append("<li><a target='_blank' href='" + oaiGetRecordLink + d.name + "'>OAI-PMH METS metadata GetRecord</a></li>");
-                $("#linkList").append("<li><a target='_blank' href='" + ppnLink + d.name.replace("PPN", "") + "'>Show in catalog</a></li>");
-                $("#dialog").dialog("open");
-                //stop showing browser menu
-                d3.event.preventDefault();
-            })
+            .on("contextmenu", displayDetailDialog)
             .call(force.drag);
 
 
