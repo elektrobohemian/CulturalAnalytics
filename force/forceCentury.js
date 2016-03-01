@@ -12,8 +12,8 @@ var w = 1600, //3000,
     h = 1100 //3000,
 fill = d3.scale.category20();
 
-var overviewJSONpath = "century_test.json";
-//var overviewJSONpath = "century.json"
+//var overviewJSONpath = "century_test.json";
+var overviewJSONpath = "century.json"
 
 // flag showing if the user is currently inspecting a cluster
 var inClusterInspection = false;
@@ -23,6 +23,9 @@ var relatedNodes = {};
 
 // display settings object for comparison edges
 var displayComparisonEdge = {};
+
+// path to images
+imgDir = "../tmp/"
 
 // the force layout
 var force;
@@ -43,6 +46,14 @@ var stabikatPlusLink = "http://eds.b.ebscohost.com/eds/results?vid=0&hid=113&bda
 var queue = null;
 var queueData = null;
 
+var locations = [
+                ['Bondi Beach', -33.890542, 151.274856, 4],
+                ['Coogee Beach', -33.923036, 151.259052, 5],
+                ['Cronulla Beach', -34.028249, 151.157507, 3],
+                ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+                ['Maroubra Beach', -33.950198, 151.259302, 1]
+            ];
+
 document.body.addEventListener('keydown', function (e) {
     k = e.keyCode;
     if (k == 37 || k == 8) { // react on "left cursor" and "backspace"
@@ -57,6 +68,22 @@ document.body.addEventListener('keydown', function (e) {
     } else if (k == 68) { // 'd'
         if (queueData != null)
             displayDetailDialog(queueData, 0);
+    } else if (k == 77) { // 'm'
+        locations = [];
+        d3.selectAll("image").each(function (d) {
+            if (d.lat != "nan") {
+                locArray = [];
+                locArray.push(d.source + " (" + d.location + ")");
+                locArray.push(d.lat);
+                locArray.push(d.lng);
+                locArray.push(imgDir + d.imagePath + ".jpg");
+                locArray.push(d);
+                locations.push(locArray);
+            }
+        });
+        $("#dialogMap").dialog("open");
+        initMap();
+
     } else if (k == 80) { // p
         force.stop();
     } else if (k == 83) { // s
@@ -272,9 +299,71 @@ function displayDetailDialog(d, i) {
     d3.event.preventDefault();
 }
 
+function initMap() {
+    $("#map").empty();
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 3,
+        center: new google.maps.LatLng(52.52000659999999, 13.404954), // centers on Berlin
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+
+    var marker, i;
+
+    for (i = 0; i < locations.length; i++) {
+        // in case of multiple markers at one location, we place these markes randomized around the original location
+        latModifier = 1;
+        lngModifier = 1;
+        latOffset = Math.round(Math.random() * 10);
+        lngOffset = Math.round(Math.random() * 10);
+        if (latOffset % 2 == 0)
+            latModifier = 1;
+        else
+            latModifier = -1;
+        if (lngOffset % 2 == 0)
+            lngModifier = 1;
+        else
+            lngModifier = -1;
+        lat = parseFloat(locations[i][1]) + (Math.random() / 100.0) * latModifier;
+        lng = parseFloat(locations[i][2]) + (Math.random() / 100.0) * lngModifier;
+
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: map
+        });
+
+        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+            return function () {
+                d = locations[i][4];
+                img = "<img height='150px' src='" + locations[i][3] + "' />";
+
+                markerContent = "";
+                markerContent += "<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>";
+                markerContent += "<p>" + d.location + "</p>";
+                markerContent += "<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " + cleanUp(d.creator) + "</p>";
+                markerContent += "<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " + cleanUp(d.publisher) + "</p>";
+                markerContent += "<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " + cleanUp(d.source) + "</p>";
+                markerContent += "<p><span class='legend_mediatype'>&#9608;&nbsp;</span>Mediatype: " + cleanUp(d.mediatype) + " (<span class='legend_subject'>&#9608;&nbsp;</span>" + cleanUp(d.subject) + ")</p>";
+
+                markerContent += "<ul>";
+                markerContent += "<li><a target='_blank' href='" + metsLink + d.name + "'>METS/MODS metadata</a></li>";
+
+                markerContent += "<li><a target='_blank' href='" + ppnLink + d.name.replace("PPN", "") + "'>Show in catalog</a></li>";
+                markerContent += "<li><a target='_blank' href='" + stabikatPlusLink + d.location + "'>Search for location in stabikat+ discovery system</a></li>";
+                markerContent += "</ul>";
+
+                infowindow.setContent(img + markerContent);
+                //infowindow.setContent(img + "<p>" + locations[i][0] + "</p>");
+                infowindow.open(map, marker);
+            }
+        })(marker, i));
+    }
+}
+
 // central D3 rendering function
 function renderNetworkGraph(jsonFileName) {
-    imgDir = "../tmp/"
     d3.select("#chart").selectAll("*").remove();
 
     var vis = d3.select("#chart")

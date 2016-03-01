@@ -6,6 +6,8 @@
     <title>Force-Directed Layout</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
     <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXl5qnSgKHPaWF7bKvZ5--1MGlkuneBi4"></script>
+
     <link href="./jquery-ui-1.11.4.custom/jquery-ui.css" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="force.css" />
 
@@ -18,6 +20,7 @@
     <h1>Characteristic Media per Century
     <button type="button" onfocus='blur();' onclick="backToOverview();"> &#8592; Back to overview</button>
         <button type="button" onfocus='blur();' onclick="displaySettingsDialog();"> &#9881;</button>
+        <button type="button" onfocus='blur();' onclick="$('#dialogHelp').dialog('open');">?</button>
         </h1>
     <div id="chart"></div>
 
@@ -29,6 +32,15 @@
     <div id="dialogSettings" title="Display Settings">
         <p>Click a button to toggle visibility of relationship edges</p>
         <div id="dlgSettingsText"></div>
+    </div>
+
+    <div id="dialogMap" title="Map">
+        <div id="dlgMapText"></div>
+        <div id="map"></div>
+    </div>
+
+    <div id="dialogHelp" title="Help">
+        <p>test help</p>
     </div>
 
     <script type="text/javascript" src="forceCentury.js"></script>
@@ -53,6 +65,37 @@
 
     $(function() {
         $("#dialogSettings").dialog({
+            resizable: false,
+            autoOpen: false,
+            height: 200,
+            modal: false,
+            dialogClass: 'transparent-dialog',
+            buttons: {
+                "Ok": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    $(function() {
+        $("#dialogMap").dialog({
+            resizable: false,
+            autoOpen: false,
+            width: 800,
+            height: 600,
+            modal: false,
+            dialogClass: 'transparent-dialog',
+            buttons: {
+                "Ok": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    $(function() {
+        $("#dialogHelp").dialog({
             resizable: false,
             autoOpen: false,
             height: 200,
