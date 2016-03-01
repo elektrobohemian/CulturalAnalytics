@@ -20,6 +20,7 @@
     <h1>Characteristic Media per Century
     <button type="button" onfocus='blur();' onclick="backToOverview();"> &#8592; Back to overview</button>
         <button type="button" onfocus='blur();' onclick="displaySettingsDialog();"> &#9881;</button>
+        <button type="button" onfocus='blur();' onclick="$('#dialogHelp').dialog('open');">?</button>
         </h1>
     <div id="chart"></div>
 
@@ -36,6 +37,10 @@
     <div id="dialogMap" title="Map">
         <div id="dlgMapText"></div>
         <div id="map"></div>
+    </div>
+
+    <div id="dialogHelp" title="Help">
+        <p>test help</p>
     </div>
 
     <script type="text/javascript" src="forceCentury.js"></script>
@@ -79,6 +84,21 @@
             autoOpen: false,
             width: 800,
             height: 600,
+            modal: false,
+            dialogClass: 'transparent-dialog',
+            buttons: {
+                "Ok": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    $(function() {
+        $("#dialogHelp").dialog({
+            resizable: false,
+            autoOpen: false,
+            height: 200,
             modal: false,
             dialogClass: 'transparent-dialog',
             buttons: {
