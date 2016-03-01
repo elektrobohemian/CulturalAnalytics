@@ -21,6 +21,8 @@
     <button type="button" onfocus='blur();' onclick="backToOverview();"> &#8592; Back to overview</button>
         <button type="button" onfocus='blur();' onclick="displaySettingsDialog();"> &#9881;</button>
         <button type="button" onfocus='blur();' onclick="$('#dialogHelp').dialog('open');">?</button>
+        <br />
+        <p id="legend">documents share...</p>
         </h1>
     <div id="chart"></div>
 
@@ -40,7 +42,40 @@
     </div>
 
     <div id="dialogHelp" title="Help">
-        <p>test help</p>
+        <table>
+            <tr>
+                <td>&#8592;</td>
+                <td>Back to overview</td>
+            </tr>
+            <tr>
+                <td>ESC</td>
+                <td>Remove comparison edges</td>
+            </tr>
+            <tr>
+                <td>b</td>
+                <td>Build metadata package</td>
+            </tr>
+            <tr>
+                <td>c</td>
+                <td>Compare current document to others</td>
+            </tr>
+            <tr>
+                <td>d</td>
+                <td>Display details of current document</td>
+            </tr>
+            <tr>
+                <td>m</td>
+                <td>Display map of displayed documents</td>
+            </tr>
+            <tr>
+                <td>p</td>
+                <td>Pause animation</td>
+            </tr>
+            <tr>
+                <td>s</td>
+                <td>Start animation</td>
+            </tr>
+        </table>
     </div>
 
     <script type="text/javascript" src="forceCentury.js"></script>
@@ -98,7 +133,7 @@
         $("#dialogHelp").dialog({
             resizable: false,
             autoOpen: false,
-            height: 200,
+            height: 230,
             modal: false,
             dialogClass: 'transparent-dialog',
             buttons: {

@@ -12,8 +12,8 @@ var w = 1600, //3000,
     h = 1100 //3000,
 fill = d3.scale.category20();
 
-//var overviewJSONpath = "century_test.json";
-var overviewJSONpath = "century.json"
+var overviewJSONpath = "century_test.json";
+//var overviewJSONpath = "century.json"
 
 // flag showing if the user is currently inspecting a cluster
 var inClusterInspection = false;
@@ -26,6 +26,8 @@ var displayComparisonEdge = {};
 
 // path to images
 imgDir = "../tmp/"
+
+legendCreated = false;
 
 // the force layout
 var force;
@@ -266,7 +268,7 @@ function displayDetailDialog(d, i) {
     if (!inClusterInspection)
         $("#myDialogText").append("<button type='button' onfocus='blur();' onclick=\"inClusterInspection=true;queue = null;queueData = null; renderNetworkGraph('./clusters/" + d.century + "/" + d.cluster + ".json');$('#dialog').dialog('close');\">Inspect cluster</button>");
     $("#myDialogText").append("&nbsp; <button type='button' onfocus='blur();' onclick=\"drawSimilarityEdges();\">Show relationships</button>");
-    $("#myDialogText").append("&nbsp; <button type='button' onfocus='blur();' onclick=\"createDownloadWindow();\">Create package</button>");
+    $("#myDialogText").append("&nbsp; <button type='button' onfocus='blur();' onclick=\"createDownloadWindow();\">Build package</button>");
 
 
     $("#myDialogText").append("<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>");
@@ -372,10 +374,20 @@ function renderNetworkGraph(jsonFileName) {
         .attr("height", h);
 
     d3.json(jsonFileName, function (json) {
-        // after the JSON has been loaded, create a settings object in order to steer the visibility of comparison edges
+        // after the JSON has been loaded, create a settings object in order to steer the visibility of comparison edges and create an appropriate legend
         Object.keys(json.nodes[0]).forEach(function (key, index) {
             displayComparisonEdge[key] = "on";
+
+            if (!legendCreated) {
+                $('#legend').append("<ul class='legend'>");
+                if (key != "id" && key != "lat" && key != "lng" && key != "cluster" && key != "type" && key != "imagePath" && key != "century" && key != "name" && key != "locationRaw") {
+                    $('#legend').append("<li class='legend'><span class='legend_" + key + "'>&#9608;&nbsp;</span>" + key + "</li>");
+                }
+                $('#legend').append("</ul>");
+            }
         });
+        legendCreated = true;
+
 
         force = d3.layout.force()
             .charge(-120)

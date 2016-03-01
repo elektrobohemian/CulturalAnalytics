@@ -162,6 +162,14 @@ line.edgeLink_subject {
 Legend labels
 */
 
+li.legend {
+    font-family: 'Helvetica Neue', 'Helvetica Light', sans-serif;
+    font-weight: lighter;
+    font-size: 11px;
+    list-style-type: none;
+    /*margin-bottom: -25px;*/
+    /*padding-bottom: 5px;*/
+}
 span.legend_title {
     color: #000000;
 }
