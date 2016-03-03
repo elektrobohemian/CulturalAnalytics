@@ -12,8 +12,8 @@ var w = 1600, //3000,
     h = 1100 //3000,
 fill = d3.scale.category20();
 
-var overviewJSONpath = "century_test.json";
-//var overviewJSONpath = "century.json"
+//var overviewJSONpath = "century_test.json";
+var overviewJSONpath = "century.json"
 
 // flag showing if the user is currently inspecting a cluster
 var inClusterInspection = false;
@@ -90,6 +90,8 @@ document.body.addEventListener('keydown', function (e) {
         force.stop();
     } else if (k == 83) { // s
         force.start();
+    } else if (k == 191) { // ?
+        $("#dialogHelp").dialog("open");
     }
     console.log(k);
 });
