@@ -12,8 +12,8 @@ var w = 1600, //3000,
     h = 1100 //3000,
 fill = d3.scale.category20();
 
-//var overviewJSONpath = "century_test.json";
-var overviewJSONpath = "century.json"
+var overviewJSONpath = "century_test.json";
+//var overviewJSONpath = "century.json"
 
 // flag showing if the user is currently inspecting a cluster
 var inClusterInspection = false;
@@ -24,13 +24,26 @@ var relatedNodes = {};
 // display settings object for comparison edges
 var displayComparisonEdge = {};
 
+var stdImageSize = 50;
+var maxImageSize = 250;
+
+var draggingFixEnabled = false;
+
+// checks whether comparison lines have to be drawn
+var inComparisonMode = false;
+
 // path to images
 imgDir = "../tmp/"
 
 legendCreated = false;
 
+var animationPaused = false;
+
 // the force layout
 var force;
+
+// the SVG "canvas"
+var vis;
 
 var linkHead = "http://ngcs.staatsbibliothek-berlin.de/?action=metsImage&format=jpg&metsFile=";
 var linkTail = "&divID=PHYS_0001"; //&width=800&rotate=0";
@@ -48,24 +61,23 @@ var stabikatPlusLink = "http://eds.b.ebscohost.com/eds/results?vid=0&hid=113&bda
 var queue = null;
 var queueData = null;
 
-var locations = [
-                ['Bondi Beach', -33.890542, 151.274856, 4],
-                ['Coogee Beach', -33.923036, 151.259052, 5],
-                ['Cronulla Beach', -34.028249, 151.157507, 3],
-                ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
-                ['Maroubra Beach', -33.950198, 151.259302, 1]
-            ];
+var locations = [];
 
 document.body.addEventListener('keydown', function (e) {
     k = e.keyCode;
     if (k == 37 || k == 8) { // react on "left cursor" and "backspace"
         backToOverview();
-    } else if (k == 27) {
+    } else if (k == 27) { //ESC
         // remove old lines
-        d3.selectAll("#compareEdge").remove();
+        //d3.selectAll("#compareEdge").remove();
+        fadeOutSimilarityEdges();
+        inComparisonMode = false;
+        if (!animationPaused)
+            force.start();
     } else if (k == 66) { // 'b'
         createDownloadWindow();
     } else if (k == 67) { // 'c'
+        inComparisonMode = true;
         drawSimilarityEdges();
     } else if (k == 68) { // 'd'
         if (queueData != null)
@@ -88,34 +100,47 @@ document.body.addEventListener('keydown', function (e) {
 
     } else if (k == 80) { // p
         force.stop();
+        animationPaused = true;
     } else if (k == 83) { // s
         force.start();
+        animationPaused = false;
     } else if (k == 191) { // ?
         $("#dialogHelp").dialog("open");
     }
     console.log(k);
 });
 
+function fadeOutSimilarityEdges() {
+    //console.log("fade out");
+    d3.selectAll("image").style("opacity", 1.0);
+    d3.selectAll("#compareEdge")
+        .transition()
+        .duration(400)
+        .style("opacity", 0.0)
+        .remove();
+}
 
 function drawSimilarityEdges() {
     // stop the animation in order to draw the lines without the need for updating them continuously
     force.stop();
     // remove old lines
-    d3.selectAll("#compareEdge").remove();
+    //d3.selectAll("#compareEdge").remove();
+    fadeOutSimilarityEdges();
     // remove old related nodes
     for (var member in relatedNodes) delete relatedNodes[member];
 
     vis = d3.select("#chart svg");
 
     d3.selectAll("image").each(function (d) {
+        somethingInCommon = false;
         Object.keys(d).forEach(function (key, index) {
             // key: the name of the object key
-            // index: the ordinal position of the key within the object 
+            // index: the ordinal position of the key within the object
             // type, weight, fixed are ignored
             if (key != "type" && key != "weight" && key != "fixed" && key != "century") {
                 if (queueData != null) {
                     if (eval("queueData." + key) == eval("d." + key) && displayComparisonEdge[key] == "on") {
-
+                        somethingInCommon = true;
                         vis.append("svg:line")
                             //.attr("class", "link")
                             .attr("class", "edgeLink_" + key)
@@ -124,7 +149,10 @@ function drawSimilarityEdges() {
                             .attr("x1", queueData.x)
                             .attr("y1", queueData.y)
                             .attr("x2", d.x)
-                            .attr("y2", d.y);
+                            .attr("y2", d.y)
+                            .transition()
+                            .duration(400)
+                            .style("stroke-opacity", 0.6);
 
                         if (!(d.name in relatedNodes)) {
                             relatedNodes[d.name] = d;
@@ -134,6 +162,11 @@ function drawSimilarityEdges() {
                 }
             }
         });
+        if (!somethingInCommon) {
+            d3.select(this).style("opacity", 0.5);
+        } else {
+            d3.select(this).style("opacity", 1.0);
+        }
     }); // END selectAll + foreach
 }
 
@@ -240,6 +273,8 @@ function displaySettingsDialog() {
 
     $("#dlgSettingsText").empty();
 
+    //draggingFixEnabled
+
     Object.keys(displayComparisonEdge).forEach(function (key, index) {
         if (key != "id" && key != "lat" && key != "lng" && key != "cluster" && key != "type" && key != "imagePath" && key != "century" && key != "name" && key != "locationRaw") {
             $('#dlgSettingsText').append("<span class='legend_" + key + "'>&#9608;&nbsp;</span>" + '<input type="button" id="' + key + '" value="' + key + '" class="' + displayComparisonEdge[key] + '" onfocus="blur();" onclick="toggleButton(this); drawSimilarityEdges();" /> <br />');
@@ -274,8 +309,19 @@ function displayDetailDialog(d, i) {
 
 
     $("#myDialogText").append("<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>");
-    $("#myDialogText").append("<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " + cleanUp(d.creator) + "</p>");
-    $("#myDialogText").append("<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " + cleanUp(d.publisher) + "</p>");
+    cleanCreator = cleanUp(d.creator);
+    if (cleanCreator != "- Unknown -")
+        $("#myDialogText").append("<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: <a target='_blank' href='" + stabikatPlusLink + encodeURIComponent(cleanCreator) + "'>" + cleanCreator + "</a></p>");
+    else {
+        $("#myDialogText").append("<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " + cleanCreator + "</p>");
+    }
+
+    cleanPublisher = cleanUp(d.publisher);
+    if (cleanPublisher != "- Unknown -") {
+        $("#myDialogText").append("<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: <a target='_blank' href='" + stabikatPlusLink + encodeURIComponent(cleanPublisher) + "'>" + cleanPublisher + "</a></p>");
+    } else {
+        $("#myDialogText").append("<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " + cleanPublisher + "</p>");
+    }
     $("#myDialogText").append("<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " + cleanUp(d.source) + "</p>");
     $("#myDialogText").append("<p><span class='legend_mediatype'>&#9608;&nbsp;</span>Mediatype: " + cleanUp(d.mediatype) + " (<span class='legend_subject'>&#9608;&nbsp;</span>" + cleanUp(d.subject) + ")</p>");
 
@@ -297,7 +343,7 @@ function displayDetailDialog(d, i) {
     $("#linkList").append("<li><a target='_blank' href='" + metsLink + d.name + "'>METS/MODS metadata</a></li>");
     $("#linkList").append("<li><a target='_blank' href='" + oaiGetRecordLink + d.name + "'>OAI-PMH METS metadata GetRecord</a></li>");
     $("#linkList").append("<li><a target='_blank' href='" + ppnLink + d.name.replace("PPN", "") + "'>Show in catalog</a></li>");
-    $("#linkList").append("<li><a target='_blank' href='" + stabikatPlusLink + d.name.replace("PPN", "") + "'>Search for title in stabikat+ discovery system</a></li>");
+    $("#linkList").append("<li><a target='_blank' href='" + stabikatPlusLink + encodeURIComponent(d.name.replace("PPN", "")) + "'>Search for title in stabikat+ discovery system</a></li>");
     $("#dialog").dialog("open");
     //stop showing browser menu
     d3.event.preventDefault();
@@ -346,8 +392,20 @@ function initMap() {
                 markerContent = "";
                 markerContent += "<p><b>" + cleanUp(d.title) + " (" + cleanUp(d.dateClean) + ")</b></p>";
                 markerContent += "<p>" + d.location + "</p>";
-                markerContent += "<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " + cleanUp(d.creator) + "</p>";
-                markerContent += "<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " + cleanUp(d.publisher) + "</p>";
+                cleanCreator = cleanUp(d.creator);
+                if (cleanCreator != "- Unknown -")
+                    markerContent += "<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: <a target='_blank' href='" + stabikatPlusLink + encodeURIComponent(cleanCreator) + "'>" + cleanCreator + "</a></p>";
+                else {
+                    markerContent += "<p><span class='legend_creator'>&#9608;&nbsp;</span>Creator: " + cleanCreator + "</p>";
+                }
+                cleanPublisher = cleanUp(d.publisher);
+                if (cleanPublisher != "- Unknown -") {
+                    markerContent += "<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: <a target='_blank' href='" + stabikatPlusLink + encodeURIComponent(cleanPublisher) + "'>" + cleanPublisher + "</a></p>";
+                } else {
+                    markerContent += "<p><span class='legend_publisher'>&#9608;&nbsp;</span>Publisher: " + cleanPublisher + "</p>";
+                }
+
+
                 markerContent += "<p><span class='legend_source'>&#9608;&nbsp;</span>Source: " + cleanUp(d.source) + "</p>";
                 markerContent += "<p><span class='legend_mediatype'>&#9608;&nbsp;</span>Mediatype: " + cleanUp(d.mediatype) + " (<span class='legend_subject'>&#9608;&nbsp;</span>" + cleanUp(d.subject) + ")</p>";
 
@@ -366,14 +424,67 @@ function initMap() {
     }
 }
 
+d3.selection.prototype.moveToFront = function () {
+    return this.each(function () {
+        // path is g.image
+        farfarG = this.parentNode.parentNode;
+        //g = this.parentNode.appendChild(this);
+        farfarG.appendChild(this.parentNode);
+
+    });
+};
+
+function mouseover() {
+    force.stop();
+    d3.select(this).moveToFront();
+    d3.select(this)
+        .transition()
+        .delay(500)
+        .duration(750)
+        .attr("height", maxImageSize)
+        .attr("width", maxImageSize);
+}
+
+function mouseout() {
+    d3.select(this)
+        .transition()
+        .duration(750)
+        .attr("height", stdImageSize)
+        .attr("width", stdImageSize);
+    if (!animationPaused && !inComparisonMode)
+        force.start();
+}
+
+function redraw() {
+    console.log("zooming...");
+    vis.attr("transform",
+        "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+}
+
+function zoomWithSlider(scale) {
+    var svg = d3.select("#chart").select("svg");
+    var container = svg.select("g");
+    var h = svg.attr("height"),
+        w = svg.attr("width");
+
+    // Note: works only on the <g> element and not on the <svg> element
+    // which is a common mistake
+    container.attr("transform",
+        "translate(" + w / 2 + ", " + h / 2 + ") " +
+        "scale(" + scale + ") " +
+        "translate(" + (-w / 2) + ", " + (-h / 2) + ")");
+}
+
 // central D3 rendering function
 function renderNetworkGraph(jsonFileName) {
     d3.select("#chart").selectAll("*").remove();
 
-    var vis = d3.select("#chart")
+    vis = d3.select("#chart")
         .append("svg:svg")
         .attr("width", w)
-        .attr("height", h);
+        .attr("height", h)
+        .append("svg:g")
+        .call(d3.behavior.zoom().on("zoom", redraw));
 
     d3.json(jsonFileName, function (json) {
         // after the JSON has been loaded, create a settings object in order to steer the visibility of comparison edges and create an appropriate legend
@@ -404,10 +515,14 @@ function renderNetworkGraph(jsonFileName) {
             .on("dragstart", dragstart);
 
         function dragstart(d) {
-            //d3.select("#compareEdge").remove();
-            d3.selectAll("#compareEdge").remove();
-            d3.select(this).classed("fixed", d.fixed = true);
+            if (draggingFixEnabled) {
+                d3.selectAll("#compareEdge").remove();
+                //fadeOutSimilarityEdges();
+                d3.select(this).classed("fixed", d.fixed = true);
+            }
         }
+
+
 
         var link = vis.selectAll("line.link")
             .data(json.links)
@@ -437,7 +552,8 @@ function renderNetworkGraph(jsonFileName) {
 
         var g = vis.selectAll("circle.node")
             .data(json.nodes)
-            .enter().append("svg:g")
+            .enter()
+            .append("svg:g")
             //.attr("class", "g.nodegroup")
             .attr("class", function (d) {
                 return "g.nodegroup " + d.decade;
@@ -449,7 +565,7 @@ function renderNetworkGraph(jsonFileName) {
         var node = g.append("svg:circle")
             .attr("class", function (d) {
                 if (d.type == "century" || d.type == "dateClean") return "node";
-                else return "nodeInvisible";
+                else return "node"; //"nodeInvisible";
             })
             .attr("cx", function (d) {
                 return d.x;
@@ -461,10 +577,7 @@ function renderNetworkGraph(jsonFileName) {
             .style("fill", function (d) {
                 return fill(d.group);
             }) // d referenziert ein JSON-Tag
-            .on("click", function (d, i) {
-                var pos = d3.mouse(this);
-                console.log(pos);
-            }) // daz: http://stackoverflow.com/questions/8238990/unable-to-get-click-event-in-d3-javascript-library   http://stackoverflow.com/questions/24394369/adding-onclick-event-to-d3-force-layout-graph
+            // daz: http://stackoverflow.com/questions/8238990/unable-to-get-click-event-in-d3-javascript-library   http://stackoverflow.com/questions/24394369/adding-onclick-event-to-d3-force-layout-graph
             .call(force.drag);
 
         var labels = g.append("text")
@@ -495,35 +608,35 @@ function renderNetworkGraph(jsonFileName) {
                 }
             })
             .attr("x", function (d) {
-                return (d.x - 25);
+                return (d.x - stdImageSize / 2);
             })
             .attr("y", function (d) {
-                return (d.y - 25);
+                return (d.y - stdImageSize / 2);
             })
-            .attr("height", 50)
-            .attr("width", 50)
+            .attr("height", function (d) {
+                if (d.type != "century" && d.type != "dateClean")
+                    return stdImageSize;
+                else return 0;
+            })
+            .attr("width", function (d) {
+                if (d.type != "century" && d.type != "dateClean")
+                    return stdImageSize;
+                else return 0;
+            })
             .on("click", function (d, i) {
                 var pos = d3.mouse(this);
                 console.log(pos);
                 console.log(d.name);
                 event.preventDefault();
 
-                /* OLD comparison of two elements
-                // only add the PPN if it is not in the queue
-                if (d.name != queue[0] && d.name != queue[1] && d.type != "century") {
-                    if (queue.length < 2) {
-                        queue.push(d.name);
-                        queueData.push(d);
-                    } else {
-                        queue.shift();
-                        queueData.shift();
-                        queue.push(d.name);
-                        queueData.push(d);
-                    }
-                }*/
+                //d3.selectAll("#compareEdge").remove();
+                fadeOutSimilarityEdges();
+
                 queue = d.name;
                 queueData = d;
 
+                if (inComparisonMode)
+                    drawSimilarityEdges();
                 console.log(queue);
                 console.log(queueData);
             })
@@ -537,6 +650,8 @@ function renderNetworkGraph(jsonFileName) {
 
             })
             .on("contextmenu", displayDetailDialog)
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout)
             .call(force.drag);
 
 
@@ -595,5 +710,7 @@ function renderNetworkGraph(jsonFileName) {
         });
     });
 };
+
+
 
 renderNetworkGraph(overviewJSONpath);

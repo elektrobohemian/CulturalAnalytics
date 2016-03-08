@@ -16,14 +16,18 @@
 </head>
 
 <body>
-
     <h1>Characteristic Media per Century &beta;
     <button type="button" onfocus='blur();' onclick="backToOverview();"> &#8592; Back to overview</button>
         <button type="button" onfocus='blur();' onclick="displaySettingsDialog();"> &#9881;</button>
         <button type="button" onfocus='blur();' onclick="$('#dialogHelp').dialog('open');">?</button>
+        
         <br />
         <p id="legend">documents share...</p>
+        <p>&#8693; &nbsp;zoom</p>
+        <div id="slider" style="position:fixed; width:5px; height:200px;"></div>
         </h1>
+
+    <div id="slider" style="position:fixed; width:5px; height:200px; margin-top:55px;"></div>
     <div id="chart"></div>
 
     <div id="dialog" title="Details">
@@ -141,6 +145,19 @@
                 "Ok": function() {
                     $(this).dialog("close");
                 }
+            }
+        });
+    });
+
+    $(function() {
+        $("#slider").slider({
+            orientation: "vertical", //"horizontal",
+            range: "min",
+            min: 10,
+            max: 500,
+            value: 100,
+            slide: function(event, ui) {
+                zoomWithSlider(ui.value / 100);
             }
         });
     });

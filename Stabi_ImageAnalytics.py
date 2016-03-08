@@ -15,7 +15,7 @@
 # 
 # If you installed everything correctly with the help of [Anaconda](https://www.continuum.io/downloads) as explained in [dst4l0.ipynb](dst4l0.ipynb), the following packages should be installed correctly and be importable without problems.
 
-# In[228]:
+# In[170]:
 
 # The %... is an iPython thing, and is not part of the Python language.
 # In this case we're just telling the plotting library to draw things on
@@ -67,6 +67,8 @@ from sklearn.metrics.pairwise import euclidean_distances
 # OAI
 from sickle import Sickle
 
+import googlemaps
+
 def printLog(text):
     now=str(datetime.now())
     print "["+now+"]\t"+text
@@ -97,14 +99,14 @@ if not os.path.exists("./html/"):
 
 # The only missing package is most likely Jellyfish, which provides support for string matching and offers such phonetic distance functions that we will need below. For further details, see the [Jellyfish homepage](https://pypi.python.org/pypi/jellyfish). The package can be installed by running the following command.
 
-# In[112]:
+# In[171]:
 
 #get_ipython().system(u'pip install jellyfish')
 
 
 # #### Additional Configuration of This Notebook
 
-# In[113]:
+# In[172]:
 
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #
@@ -126,13 +128,13 @@ demoClustering=False # should be False if you run this for the first time
 # and not only loading from disk
 #
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-allowComputationallyExtensiveCalculations=False # should be True if you run this for the first time
+allowComputationallyExtensiveCalculations=True # should be True if you run this for the first time
 
 
 # ## Retrieving Data
 # ### Connecting to the OAI-conform Repository
 
-# In[114]:
+# In[173]:
 
 # connect to a metadata repository
 sickle = Sickle('http://digital.staatsbibliothek-berlin.de/oai')
@@ -144,7 +146,7 @@ for s in sets:
     print "'"+s.setName+"' accessible via: '"+s.setSpec+"'"
 
 
-# In[115]:
+# In[174]:
 
 # get the records from this repository's specific document set 'DC_krieg.1914.1918' (documents related to World War I) 
 # using Dublin Core format 
@@ -153,7 +155,7 @@ records = sickle.ListRecords(metadataPrefix='oai_dc', set='DC_all')
 
 # ### Downloading Metadata Records
 
-# In[116]:
+# In[175]:
 
 savedRecords=[]
 if allowDownloads:
@@ -182,7 +184,7 @@ if allowDownloads:
     pickle.dump( savedRecords, open( "save_120k_dc_all.pickle", "wb" ) )
 
 
-# In[117]:
+# In[176]:
 
 # uncomment this cell if you want to split the image download to two different computers
 # in this case, one computer will use "even_dc_all.pickle" while the other will use "odd_dc_all.pickle" in the next cell
@@ -206,7 +208,7 @@ if allowDownloads:
 #pickle.dump( oddRecords, open( "odd_dc_all.pickle", "wb" ) )
 
 
-# In[118]:
+# In[177]:
 
 # uncomment this line if you are continuing the execution of this notebook at a later point in time
 #savedRecords=pickle.load( open( "save_120k_dc_all.pickle", "rb" ) )
@@ -271,7 +273,7 @@ else:
 
 # ### Creating a Dataframe from the Metadata Records
 
-# In[119]:
+# In[178]:
 
 # load the records
 printLog("Loading pickled records...")
@@ -332,17 +334,17 @@ df.shape
 
 # ## Inspecting Data
 
-# In[120]:
+# In[179]:
 
 df.head()
 
 
-# In[121]:
+# In[180]:
 
 df[df.PPN.isnull()].count()
 
 
-# In[122]:
+# In[181]:
 
 def uniqueValues(currentDataFrame):
     colNames=currentDataFrame.columns.values.tolist()
@@ -359,7 +361,7 @@ uniqueValues(df)
 
 # ### Classification of Data with the Help of Regular Expressions
 
-# In[123]:
+# In[182]:
 
 # zum matchen: p.match
 # regular expressions taken from: http://stackoverflow.com/questions/1449817/what-are-some-of-the-most-useful-regular-expressions-for-programmers
@@ -406,7 +408,7 @@ patterns["NaN"]="^[Nn][Aa][Nn]$"
 
 # ausbauen, dass man weiß, welche Pattern wie häufig kamen?
 
-# In[124]:
+# In[183]:
 
 rowCount=0
 histogram=dict()
@@ -430,7 +432,7 @@ print "Row count: "+str(rowCount)
 print histogram    
 
 
-# In[125]:
+# In[184]:
 
 df.spatial.head(30)
 
@@ -457,7 +459,7 @@ df.spatial.head(30)
 
 # ### Combining Data Cleansing Utilities
 
-# In[126]:
+# In[185]:
 
 class DataCleaner:
     # matches alphanumeric character and the underscore at the beginning of the string
@@ -524,7 +526,7 @@ class DataCleaner:
 
 # ### Cleaning Data
 
-# In[127]:
+# In[186]:
 
 dc=DataCleaner()
 
@@ -535,7 +537,7 @@ df['spatialClean'] = df.spatial.apply(dc.cleanSpatialText)
 df['dateClean'] = df.date.apply(dc.cleanAncientYearStrict)
 
 
-# In[128]:
+# In[187]:
 
 df.sort_values(by="date")
 
@@ -543,7 +545,7 @@ df.sort_values(by="date")
 # ## Using Clustering for Further Data Cleansing
 # ### Example of The Things We Are Up To
 
-# In[129]:
+# In[188]:
 
 words = u'Berlin Balin Cölln Köln'.split()
 print words
@@ -554,7 +556,7 @@ for i,val in enumerate(words):
     
 
 
-# In[130]:
+# In[189]:
 
 # http://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.triu_indices.html
 # 2nd parameter:
@@ -579,7 +581,7 @@ r
 # $$
 # 
 
-# In[131]:
+# In[190]:
 
 def d_demo(coord):
     print coord
@@ -588,7 +590,7 @@ def d_demo(coord):
     return 1 - jaro_distance(words[i], words[j])
 
 
-# In[132]:
+# In[191]:
 
 # http://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.set_printoptions.html
 np.set_printoptions(precision=4)
@@ -613,14 +615,14 @@ r2
 # 
 # why not the elements on the diagonal? because...
 
-# In[133]:
+# In[192]:
 
 print 1 - jaro_distance(words[1], words[1])
 
 
 # ### Working with Real Data
 
-# In[134]:
+# In[193]:
 
 def d(coord):
     #print coord
@@ -628,13 +630,13 @@ def d(coord):
     return 1 - jaro_distance(unicode(str(words[i]), 'utf-8'), unicode(str(words[j]), 'utf-8'))
 
 
-# In[135]:
+# In[194]:
 
 df3=df.sort_values(by="date")#.head(100)
 df3.head()
 
 
-# In[136]:
+# In[195]:
 
 uniqueSpatials=df3["spatialClean"].unique()
 words=None
@@ -647,7 +649,7 @@ r=np.triu_indices(len(words), 1)
 
 # the next step will take some time, hence we limited the number of spatial labels before
 
-# In[137]:
+# In[196]:
 
 printLog("Started calculation of distance matrix for %i words..."%len(words))
 # _ is the last evaluated value in an interactive shell
@@ -656,7 +658,7 @@ r2=np.apply_along_axis(d, 0, r)
 printLog("Finished calculations.")
 
 
-# In[138]:
+# In[197]:
 
 Z=scipycluster.linkage(r2)
 if not demoClustering:
@@ -673,7 +675,7 @@ if not demoClustering:
 # mehr infos: https://joernhees.de/blog/2015/08/26/scipy-hierarchical-clustering-and-dendrogram-tutorial/
 # 
 
-# In[139]:
+# In[198]:
 
 #Z=pickle.load( open( "cluster_hierarchy_linkage_result.pickle", "rb" ) )
 if demoClustering:
@@ -689,7 +691,7 @@ if demoClustering:
     plt.show()
 
 
-# In[140]:
+# In[199]:
 
 clusters=scipycluster.fcluster(Z, t=0.1,criterion="distance")
 # 2. parameter ist abhängig von der clustering strategie, -> cophenetic distance
@@ -702,7 +704,7 @@ clusters=scipycluster.fcluster(Z, t=0.1,criterion="distance")
 clusters
 
 
-# In[141]:
+# In[200]:
 
 def getWordIndex(word):
     return np.where(words==word)[0]
@@ -725,7 +727,7 @@ def getClusterID(data):
 
 # ### Inspecting the Clustered Results Deeper
 
-# In[142]:
+# In[201]:
 
 #
 Z_huge=pickle.load( open( "cluster_hierarchy_linkage_result_without_name_clustering.pickle", "rb" ) )
@@ -734,13 +736,13 @@ words=uniqueSpatials
 len(words)
 
 
-# In[143]:
+# In[202]:
 
 clusters=scipycluster.fcluster(Z_huge, t=0.07,criterion="distance")
 clusters
 
 
-# In[144]:
+# In[203]:
 
 df3['spatialCluster'] = df3["spatialClean"].apply(getClusterID)
 grp=df3.groupby("spatialCluster")
@@ -750,14 +752,14 @@ print "Number of clusters: %i" % len(grp.groups.keys())
 
 # stichproben...
 
-# In[145]:
+# In[204]:
 
 grp.get_group(clusters[getWordIndex("Berlin")][0])
 
 
 # shortcut, because we are only interested in the unique names within a cluster...
 
-# In[146]:
+# In[205]:
 
 grp.get_group(clusters[getWordIndex("Frankfurt/Oder")][0])["spatialClean"].unique()
 
@@ -766,7 +768,7 @@ grp.get_group(clusters[getWordIndex("Frankfurt/Oder")][0])["spatialClean"].uniqu
 # 
 # a good time for inspecting all of our clusters' contents
 
-# In[147]:
+# In[206]:
 
 for key in grp.groups.keys():
     if key:
@@ -784,7 +786,7 @@ for key in grp.groups.keys():
 
 # ### Further Cleaning
 
-# In[148]:
+# In[207]:
 
 # Various test cases of city names
 #s1="Frankfurt, O"
@@ -821,6 +823,7 @@ def pickFirstCity(testString):
     spatialPrefixRegExes.append(re.compile("^[Ss][Aa][Ii][Nn][Tt][\s-]*",re.UNICODE))
     spatialPrefixRegExes.append(re.compile("^[S][t]\.[\s-]*",re.UNICODE))
     spatialPrefixRegExes.append(re.compile("^[Dd][Ee][Nn]\s*",re.UNICODE))
+    spatialPrefixRegExes.append(re.compile("^[Ne][Ee][Ww]\s*",re.UNICODE))
 
     #print "Tested string: >%s<" % testString
 
@@ -842,7 +845,7 @@ def pickFirstCity(testString):
 #print pickFirstCity(s2)    
 
 
-# In[149]:
+# In[208]:
 
 uniqueSpatials=df3["spatialClean"].unique()
 beforeClusterClean=len(uniqueSpatials)
@@ -850,7 +853,7 @@ df3["spatialClean"]=df3["spatialClean"].apply(pickFirstCity)
 df3.head()
 
 
-# In[242]:
+# In[209]:
 
 uniqueSpatials=df3["spatialClean"].unique()
 afterClusterClean=len(uniqueSpatials)
@@ -860,7 +863,12 @@ print "Before cluster cleaning: %i" % beforeClusterClean
 print "After cluster cleaning: %i" % afterClusterClean
 
 
-# In[243]:
+# In[210]:
+
+1 - jaro_distance(u"otto",u"")
+
+
+# In[211]:
 
 def d2(coord):
     #print "Altered d()"
@@ -868,13 +876,13 @@ def d2(coord):
     i, j = coord
     #print str(type(words[i]))+" : "+str(type(words[j]))
     if not type(words[i])==unicode:
-        #print "bumm "+ str(words[i])
+        #print "bumm "+ str(words[i])+" :"+str(i)
         if not words[i]:
-            return 0
+            return 1.0
     if not type(words[j])==unicode:
-        #print "bamm " + str(words[j])
+        #print "bamm " + str(words[j])+" :"+str(j)
         if not words[j]:
-            return 0
+            return 1.0
     dist=1 - jaro_distance(words[i],words[j]) # because jaro_distance is actually returning a similarity
     #print "%s vs. %s -> %f" %(words[i],words[j],dist)
     #return 1 - jaro_distance(unicode(str(words[i]), 'utf-8'), unicode(str(words[j]), 'utf-8'))
@@ -886,13 +894,13 @@ def d3(coord):
     i, j = coord
     #print str(type(words[i]))+" : "+str(type(words[j]))
     if not type(words[i])==unicode:
-        #print "bumm "+ str(words[i])
+        #print "bumm "+ str(words[i])+" :"+str(i)
         if not words[i]:
-            return 0
+            return 1.0
     if not type(words[j])==unicode:
-        #print "bamm " + str(words[j])
+        #print "bamm " + str(words[j])+" :"+str(j)
         if not words[j]:
-            return 0
+            return 1.0
     dist=1 - jaro_winkler(words[i],words[j]) # because jaro_distance is actually returning a similarity
     #print "%s vs. %s -> %f" %(words[i],words[j],dist)
     return dist
@@ -900,7 +908,7 @@ def d3(coord):
 
 # vielleicht nötig, das ganze außerhalb des jupyter-notebooks auszuführen, wenn es time out probleme (siehe console) gibt
 
-# In[152]:
+# In[212]:
 
 if not demoClustering:
     printLog("Calculating Jaro distances...")
@@ -918,4 +926,5 @@ if not demoClustering:
     #pickle.dump( r2, open( "r2.pickle", "wb" ) )
     printLog("Distance matrices created.")
     # (END_HERE_FOR_LINKAGE)
+
 
