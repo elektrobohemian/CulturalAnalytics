@@ -12,8 +12,8 @@ var w = 1600, //3000,
     h = 1100 //3000,
 fill = d3.scale.category20();
 
-var overviewJSONpath = "century_test.json";
-//var overviewJSONpath = "century.json"
+//var overviewJSONpath = "century_test.json";
+var overviewJSONpath = "century.json"
 
 // flag showing if the user is currently inspecting a cluster
 var inClusterInspection = false;
@@ -204,29 +204,80 @@ function createDownloadWindow() {
 
     var htmlHead = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/><link type='text/css' rel='stylesheet' href='force.css' /></head><body>";
     var htmlBody = "";
+    var tableHead = "<table><tr><th>Title</th><th>METS/MODS URL</th><th>Dublin Core URL</th><th>Alternative</th><th>Creator</th><th>Publisher</th><th>Century</th><th>Date</th><th>Mediatype</th><th>Location</th><th>Longitude</th><th>Latitude</th><th>Location (raw)</th></tr>\n";
+    var tableTail = "</table>"
     var htmlTail = "</body></html>";
 
     w.document.writeln(html);
     $(w.document.body).append("<h2>List of Related Media</h2>");
+
+    tableHead = tableHead + "<tr>";
+    tableHead = tableHead + "<td><b>" + queueData.title + "</b></td>";
+
+    tableHead = tableHead + "<td><a target='_blank' href='" + oaiGetRecordLink + queueData.name + "'>" + oaiGetRecordLink + queueData.name + "</a></td> "
+    tableHead = tableHead + "<td><a target='_blank' href='" + oaiGetRecordLink_DC + queueData.name + "'>" + oaiGetRecordLink_DC + queueData.name + "</a></td>";
+
+
+    tableHead = tableHead + "<td>" + queueData.alternative + "</td>";
+    tableHead = tableHead + "<td>" + queueData.creator + "</td>";
+    tableHead = tableHead + "<td>" + queueData.publisher + "</td>";
+    tableHead = tableHead + "<td>" + queueData.century + "</td>";
+    tableHead = tableHead + "<td>" + queueData.dateClean + "</td>";
+    tableHead = tableHead + "<td>" + queueData.mediatype + "</td>";
+    tableHead = tableHead + "<td>" + queueData.location + "</td>";
+    tableHead = tableHead + "<td>" + queueData.lng + "</td>";
+    tableHead = tableHead + "<td>" + queueData.lat + "</td>";
+    tableHead = tableHead + "<td>" + queueData.locationRaw + "</td>";
+
+
+    tableHead = tableHead + "</tr>\n";
+
     for (var member in relatedNodes) {
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
          TODO
          Tabelle mit maschinellen Korrekturen aus JSON anreichern
         * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        $(w.document.body).append("<p>" + relatedNodes[member].source + "</p>");
-        $(w.document.body).append("<a target='_blank' href='" + oaiGetRecordLink + relatedNodes[member].name + "'>METS/MODS</a> ");
-        $(w.document.body).append("<a target='_blank' href='" + oaiGetRecordLink_DC + relatedNodes[member].name + "'>Dublin Core</a>");
-        htmlBody = htmlBody + "<p>" + relatedNodes[member].source + "</p>";
-        htmlBody = htmlBody + "<a target='_blank' href='" + oaiGetRecordLink + relatedNodes[member].name + "'>METS/MODS</a> "
-        htmlBody = htmlBody + "<a target='_blank' href='" + oaiGetRecordLink_DC + relatedNodes[member].name + "'>Dublin Core</a>";
+        //$(w.document.body).append("<p>" + relatedNodes[member].source + "</p>");
+        //$(w.document.body).append("<a target='_blank' href='" + oaiGetRecordLink + relatedNodes[member].name + "'>METS/MODS</a> ");
+        //$(w.document.body).append("<a target='_blank' href='" + oaiGetRecordLink_DC + relatedNodes[member].name + "'>Dublin Core</a>");
+        //htmlBody = htmlBody + "<p>" + relatedNodes[member].source + "</p>";
+        //htmlBody = htmlBody + "<a target='_blank' href='" + oaiGetRecordLink + relatedNodes[member].name + "'>METS/MODS</a> "
+        //htmlBody = htmlBody + "<a target='_blank' href='" + oaiGetRecordLink_DC + relatedNodes[member].name + "'>Dublin Core</a>";
+        tableHead = tableHead + "<tr>";
+        //tableHead = tableHead + "<td>" + relatedNodes[member].source + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].title + "</td>";
+
+        tableHead = tableHead + "<td><a target='_blank' href='" + oaiGetRecordLink + relatedNodes[member].name + "'>" + oaiGetRecordLink + relatedNodes[member].name + "</a></td> "
+        tableHead = tableHead + "<td><a target='_blank' href='" + oaiGetRecordLink_DC + relatedNodes[member].name + "'>" + oaiGetRecordLink_DC + relatedNodes[member].name + "</a></td>";
+
+
+        tableHead = tableHead + "<td>" + relatedNodes[member].alternative + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].creator + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].publisher + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].century + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].dateClean + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].mediatype + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].location + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].lng + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].lat + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].locationRaw + "</td>";
+
+
+        tableHead = tableHead + "</tr>\n";
+
+
     };
-    //download("test.html", htmlHead + htmlBody + htmlTail);
+    $(w.document.body).append(tableHead + tableTail);
+
+    download("metadata.html", htmlHead + htmlBody + tableHead + tableTail + htmlTail);
 }
 
 function download(filename, text) {
     // source: http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
+    /*
     var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('href', 'data:application/xhtml+xml;charset=utf-8,' + encodeURIComponent(text));
+    //element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
 
     element.style.display = 'none';
@@ -234,7 +285,22 @@ function download(filename, text) {
 
     element.click();
 
-    document.body.removeChild(element);
+    document.body.removeChild(element);*/
+
+    var blob = new Blob([text], {
+        type: 'text/plain'
+    });
+    if (window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    } else {
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+    }
+
 }
 
 function createGoogleMapsLink(lat, lng) {
