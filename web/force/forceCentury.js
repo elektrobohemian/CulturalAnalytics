@@ -33,7 +33,7 @@ var draggingFixEnabled = false;
 var inComparisonMode = false;
 
 // path to images
-imgDir = "../tmp/"
+imgDir = "../thumbnails/"
 
 legendCreated = false;
 

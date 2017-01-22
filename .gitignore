@@ -12,3 +12,4 @@ html*/
 clusters/
 pickle_bak/
 *.pickle_bak
+web/thumbnails/*
