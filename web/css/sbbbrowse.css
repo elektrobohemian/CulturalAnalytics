@@ -145,6 +145,13 @@ line.edgeLink_source {
 line.edgeLink_creator {
     stroke: #15334F;
     stroke-opacity: .6;
+    /*stroke-dasharray: 28, 28;*/
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+line.edgeLink_creatorCluster {
+    stroke: #15334F;
+    stroke-opacity: .6;
     stroke-dasharray: 28, 28;
     stroke-width: 4;
     stroke-linecap: round;
@@ -177,6 +184,13 @@ line.edgeLink_subject {
     stroke-width: 4;
     stroke-linecap: round;
 }
+line.edgeLink_textCluster {
+    stroke: #858585;
+    stroke-opacity: .6;
+    stroke-dasharray: 4, 6;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
 
 /*
 Legend labels
@@ -196,6 +210,9 @@ span.legend_title {
 span.legend_creator {
     color: #15334F;
 }
+span.legend_creatorCluster {
+    color: #15334F;
+}
 span.legend_publisher {
     color: #DFF314;
 }
@@ -213,6 +230,9 @@ span.legend_source {
 }
 span.legend_dateClean {
     color: #78B114;
+}
+span.legend_textCluster {
+    color: #858585;
 }
 
 /*

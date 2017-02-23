@@ -200,23 +200,24 @@ function createDownloadWindow() {
         "location": "Erfurt"
     }
     var w = window.open();
-    var html = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/><link type='text/css' rel='stylesheet' href='force.css' /></head><body></body></html>";
+    var html = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/></head><body></body></html>";
 
-    var htmlHead = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/><link type='text/css' rel='stylesheet' href='force.css' /></head><body>";
+    sorttableScript = ""
+    var htmlHead = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/><script src='http://code.jquery.com/jquery-latest.js'></script><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style></head><body>";
     var htmlBody = "";
-    var tableHead = "<table><tr><th>Title</th><th>METS/MODS URL</th><th>Dublin Core URL</th><th>Alternative</th><th>Creator</th><th>Publisher</th><th>Century</th><th>Date</th><th>Mediatype</th><th>Location</th><th>Longitude</th><th>Latitude</th><th>Location (raw)</th></tr>\n";
-    var tableTail = "</table>"
-    var htmlTail = "</body></html>";
+    var tableHead = "<table><tr><th>ID</th><th>Title</th><th>METS/MODS URL</th><th>Dublin Core URL</th><th>Alternative</th><th>Creator</th><th>Publisher</th><th>Century</th><th>Date</th><th>Mediatype</th><th>Location</th><th>Longitude</th><th>Latitude</th><th>Location (raw)</th><th>titleCluster</th><th>creatorCluster</th></tr>\n";
+    var tableTail = "</tbody></table>"
+    var htmlTail = "</body><script>$('tbody').sortable();</script></html>";
 
     w.document.writeln(html);
     $(w.document.body).append("<h2>List of Related Media</h2>");
 
     tableHead = tableHead + "<tr>";
+    tableHead = tableHead + "<td><b>" + queueData.id + "</b></td>";
     tableHead = tableHead + "<td><b>" + queueData.title + "</b></td>";
 
     tableHead = tableHead + "<td><a target='_blank' href='" + oaiGetRecordLink + queueData.name + "'>" + oaiGetRecordLink + queueData.name + "</a></td> "
     tableHead = tableHead + "<td><a target='_blank' href='" + oaiGetRecordLink_DC + queueData.name + "'>" + oaiGetRecordLink_DC + queueData.name + "</a></td>";
-
 
     tableHead = tableHead + "<td>" + queueData.alternative + "</td>";
     tableHead = tableHead + "<td>" + queueData.creator + "</td>";
@@ -229,8 +230,11 @@ function createDownloadWindow() {
     tableHead = tableHead + "<td>" + queueData.lat + "</td>";
     tableHead = tableHead + "<td>" + queueData.locationRaw + "</td>";
 
+    tableHead = tableHead + "<td>" + queueData.textCluster + "</td>";
+    tableHead = tableHead + "<td>" + queueData.creatorCluster + "</td>";
 
-    tableHead = tableHead + "</tr>\n";
+
+    tableHead = tableHead + "</tr>\n<tbody>\n";
 
     for (var member in relatedNodes) {
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -245,6 +249,7 @@ function createDownloadWindow() {
         //htmlBody = htmlBody + "<a target='_blank' href='" + oaiGetRecordLink_DC + relatedNodes[member].name + "'>Dublin Core</a>";
         tableHead = tableHead + "<tr>";
         //tableHead = tableHead + "<td>" + relatedNodes[member].source + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].id + "</td>";
         tableHead = tableHead + "<td>" + relatedNodes[member].title + "</td>";
 
         tableHead = tableHead + "<td><a target='_blank' href='" + oaiGetRecordLink + relatedNodes[member].name + "'>" + oaiGetRecordLink + relatedNodes[member].name + "</a></td> "
@@ -261,6 +266,9 @@ function createDownloadWindow() {
         tableHead = tableHead + "<td>" + relatedNodes[member].lng + "</td>";
         tableHead = tableHead + "<td>" + relatedNodes[member].lat + "</td>";
         tableHead = tableHead + "<td>" + relatedNodes[member].locationRaw + "</td>";
+
+        tableHead = tableHead + "<td>" + relatedNodes[member].textCluster + "</td>";
+        tableHead = tableHead + "<td>" + relatedNodes[member].creatorCluster + "</td>";
 
 
         tableHead = tableHead + "</tr>\n";
@@ -334,7 +342,9 @@ function displaySettingsDialog() {
         "subject": "Historische Drucke",
         //"type": "image",
         //"id": "PPN788641328",
-        "location": "Erfurt"
+        "location": "Erfurt",
+        "ppn": "PPN123456789",
+        "textCluster": "999"
     }
 
     $("#dlgSettingsText").empty();

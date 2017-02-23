@@ -1,11 +1,13 @@
-*.tif
-*.pyc
+**/*.tif
+**/*.json
+**/*.csv
+**/*.pyc
 *.pickle
 *.picklez
 img.dc_chars/
 img.marvel_chars/
 tmp*/
-featureFiles/
+featureFiles*/
 html*/
 *.gml
 */jquery*/
@@ -13,3 +15,6 @@ clusters/
 pickle_bak/
 *.pickle_bak
 web/thumbnails/*
+*.bak/
+web/qa/data/*
+.DS_Store
