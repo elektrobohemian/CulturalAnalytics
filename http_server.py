@@ -16,7 +16,7 @@ import sys
 import os
 
 def load_url(path):
-    print "Webserver working directory: "+os.getcwd()
+    print("Webserver working directory: "+os.getcwd())
     sys.stdout.flush()
     PORT = 8000
     httpd = StoppableHTTPServer(("127.0.0.1",PORT), handler)
