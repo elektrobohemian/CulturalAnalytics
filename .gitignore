@@ -18,3 +18,4 @@ web/thumbnails/*
 *.bak/
 web/qa/data/*
 .DS_Store
+*.DS_Store 
