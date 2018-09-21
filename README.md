@@ -5,6 +5,8 @@ Experiments and tutorials from the wide field of cultural analytics based on tex
 
 ## Analyzing Unstructured Data
 
+![Superheroes teaser image](img/superheros_teaser.jpg)
+
 In this [tutorial](WikipediaTest.ipynb) you will learn to:
 
 * [web/screen scrape](https://en.wikipedia.org/wiki/Web_scraping) relatively unstructured data from the Wikipedia
@@ -23,7 +25,6 @@ This notebook assumes that you are using [Anaconda](https://www.anaconda.com/dow
 ## Multimodal Analysis and Enrichment of a Library Metadata Corpus
 
 This [notebook](Stabi_ImageAnalytics.ipynb) eventually evolved into a [TPDL publication](https://link.springer.com/chapter/10.1007%2F978-3-319-43997-6_24) with [open source code](https://github.com/elektrobohemian/SBBrowse2018).
-
 
 
 * In this tutorial, you will learn to read metadata from an OAI-PMH data provider and how to convert the retrieved data from Dublin Core to a pandas data frame.
