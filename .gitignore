@@ -19,3 +19,5 @@ web/thumbnails/*
 web/qa/data/*
 .DS_Store
 *.DS_Store 
+*.secret
+
