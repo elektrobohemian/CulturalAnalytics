@@ -28,5 +28,5 @@ This [notebook](Stabi_ImageAnalytics.ipynb) eventually evolved into a [TPDL publ
 
 
 * In this tutorial, you will learn to read metadata from an OAI-PMH data provider and how to convert the retrieved data from Dublin Core to a pandas data frame.
-* Furthermore, you will carry out some basic data analysis on your data in order to find out if the data is corrupt or unclean. Based on an example, you will clean some aspects of your data.
+* Furthermore, you will carry out some basic data analysis on your data in order to find out if the data is corrupt or unclean. Based on an example, you will clean some aspects of your data using techniques borrowed from machine learning.
 * Finally, you will visualize data with the help of a network graph.    
