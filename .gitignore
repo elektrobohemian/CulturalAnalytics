@@ -21,3 +21,6 @@ web/qa/data/*
 *.DS_Store 
 *.secret
 
+# Jupyter Notebook
+.ipynb_checkpoints
+
