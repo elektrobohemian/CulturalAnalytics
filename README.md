@@ -24,8 +24,7 @@ This notebook assumes that you are using [Anaconda](https://www.anaconda.com/dow
 
 ## Multimodal Analysis and Enrichment of a Library Metadata Corpus
 
-This [notebook](Stabi_ImageAnalytics.ipynb) eventually evolved into a [TPDL publication](https://link.springer.com/chapter/10.1007%2F978-3-319-43997-6_24) with [open source code](https://github.com/elektrobohemian/SBBrowse2018).
-
+This [notebook](Stabi_ImageAnalytics.ipynb) eventually evolved into a [TPDL publication](https://link.springer.com/chapter/10.1007%2F978-3-319-43997-6_24). _ATTENTION!_ The notebook is no longer maintained here. It has been moved to a separate [repository](https://github.com/elektrobohemian/SBBrowse2018).
 
 * In this tutorial, you will learn to read metadata from an OAI-PMH data provider and how to convert the retrieved data from Dublin Core to a pandas data frame.
 * Furthermore, you will carry out some basic data analysis on your data in order to find out if the data is corrupt or unclean. Based on an example, you will clean some aspects of your data using techniques borrowed from machine learning.
