@@ -23,4 +23,4 @@ web/qa/data/*
 
 # Jupyter Notebook
 .ipynb_checkpoints
-
+analysis*/
