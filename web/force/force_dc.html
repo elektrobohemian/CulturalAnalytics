@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Force-Directed Layout</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <link type="text/css" rel="stylesheet" href="../css/sbbbrowse.css" />
+
+    <script>
+        var pathPrefix = "dc/";
+        var visibleLabels = true;
+
+        var dict = {};
+        dict[1900] = true;
+        dict[1910] = true;
+        dict[1920] = true;
+        dict[1930] = true;
+        dict[1940] = true;
+        dict[1950] = true;
+        dict[1960] = true;
+        dict[1970] = true;
+        dict[1980] = true;
+        dict[1990] = true;
+        dict[2000] = true;
+        dict[2010] = true;
+        dict[2020] = true;
+
+        function toggleVisibilityPerDecade(dec) {
+            dict[dec] == true ? eval("$('." + dec + "').css({'visibility': 'hidden'})") : eval("$('." + dec + "').css({'visibility': 'visible'})");
+
+            if (dict[dec] && visibleLabels) {
+                eval("$('." + dec + ".labels').css({'visibility': 'hidden'})");
+            } else if (!dict[dec] && visibleLabels) {
+                eval("$('." + dec + ".labels').css({'visibility': 'visible'})");
+            } else if (!dict[dec] && !visibleLabels) {
+                eval("$('." + dec + ".labels').css({'visibility': 'hidden'})");
+            }
+
+            dict[dec] = !dict[dec];
+        }
+
+        function showAll() {
+            dict[1900] = true;
+            dict[1910] = true;
+            dict[1920] = true;
+            dict[1930] = true;
+            dict[1940] = true;
+            dict[1950] = true;
+            dict[1960] = true;
+            dict[1970] = true;
+            dict[1980] = true;
+            dict[1990] = true;
+            dict[2000] = true;
+            dict[2010] = true;
+            dict[2020] = true;
+
+            $('.1900').css({
+                'visibility': 'visible'
+            });
+            $('.1910').css({
+                'visibility': 'visible'
+            });
+            $('.1920').css({
+                'visibility': 'visible'
+            });
+            $('.1930').css({
+                'visibility': 'visible'
+            });
+            $('.1940').css({
+                'visibility': 'visible'
+            });
+            $('.1950').css({
+                'visibility': 'visible'
+            });
+            $('.1960').css({
+                'visibility': 'visible'
+            });
+            $('.1970').css({
+                'visibility': 'visible'
+            });
+            $('.1980').css({
+                'visibility': 'visible'
+            });
+            $('.1990').css({
+                'visibility': 'visible'
+            });
+            $('.2000').css({
+                'visibility': 'visible'
+            });
+            $('.2010').css({
+                'visibility': 'visible'
+            });
+            $('.2020').css({
+                'visibility': 'visible'
+            });
+        }
+
+        function saveSVG() {
+            var html = d3.select("#chart > svg")
+                .attr("version", 1.1)
+                .attr("xmlns", "http://www.w3.org/2000/svg")
+                .node().parentNode.innerHTML;
+
+            //console.log(html);
+            var imgsrc = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(html)));
+            var imgraw = btoa(unescape(encodeURIComponent(html)));
+            //unescape(encodeURIComponent()) because of UTF-8; https://developer.mozilla.org/de/docs/Web/API/WindowBase64/btoa
+            var img = '<img src="' + imgsrc + '">';
+            // uncomment next line to display original SVG
+            //d3.select("#svgdataurl").html(img);
+
+            var canvas = document.querySelector("canvas"),
+                context = canvas.getContext("2d");
+
+            var image = new Image;
+            image.src = imgsrc;
+
+            image.onload = function() {
+                context.drawImage(image, 0, 0);
+
+                var canvasdata = canvas.toDataURL("image/png");
+
+                var pngimg = '<img src="' + canvasdata + '">';
+                d3.select("#pngdataurl").html(pngimg);
+
+                var a = document.createElement("a");
+                a.download = "sample.png";
+                a.href = canvasdata;
+                a.click();
+
+                d3.select("#pngdataurl").selectAll("*").remove();
+            };
+        }
+
+    </script>
+</head>
+
+<body>
+
+    <h1>Abilities
+    <button type="button" onclick="showAll(); renderNetworkGraph('force_marvel_abilities.json');">All</button>
+
+    <button type="button" onclick="toggleVisibilityPerDecade(1900);">1900</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1910);">1910</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1920);">1920</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1930);">1930</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1940);">1940</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1950);">1950</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1960);">1960</button>
+
+    <button type="button" onclick="toggleVisibilityPerDecade(1970);">1970</button>
+    <!--<button type="button" onclick="d1970==true?$('.1970').css({'visibility': 'hidden'}):$('.1970').css({'visibility': 'visible'}); d1970=!d1970;">1970_ORIG</button>-->
+
+    <button type="button" onclick="toggleVisibilityPerDecade(1980);">1980</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(1990);">1990</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(2000);">2000</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(2010);">2010</button>
+    <button type="button" onclick="toggleVisibilityPerDecade(2020);">Unknown first appearance</button>
+        
+    <button type="button" onclick="saveSVG();">Save</button>
+
+    <button type="button" onclick="$('.labels').css({'visibility': 'visible'}); visibleLabels=true;">
+        On</button>
+
+    <button type="button" onclick="$('.labels').css({'visibility': 'hidden'}); visibleLabels=false;">
+        Off</button>
+        <br />
+        <div id="barchart"></div>
+        </h1>
+
+    <div id="chart"></div>
+    <script type="text/javascript" src="force.js"></script>
+
+    <script type="text/javascript" src="barchart.js"></script>
+
+
+
+    <!-- SVG save stuff-->
+    <div id="svgdataurl"></div>
+    <div id="pngdataurl"></div>
+    <canvas width="3000" height="3000" />
+
+</body>
+
+</html>

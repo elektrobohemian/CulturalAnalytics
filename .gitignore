@@ -22,8 +22,11 @@ web/qa/data/*
 *.secret
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints*
 analysis*/
 .DS_Store
 
 .DS_Store
+
+# Python Venv
+venv/

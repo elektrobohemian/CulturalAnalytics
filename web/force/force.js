@@ -176,4 +176,5 @@ function renderNetworkGraph(jsonFileName) {
     });
 };
 
-renderNetworkGraph(pathPrefix + "force.json");
+renderNetworkGraph(pathPrefix + "force.json")
+console.info("Loading JSON from: "+pathPrefix + "force.json")
