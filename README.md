@@ -20,7 +20,10 @@ Would you should already know:
 * some minor HTML
 * some JavaScript if you want to understand the web-based visualization at the end of the tutorial
 
-This notebook assumes that you are using [Anaconda](https://www.anaconda.com/download/) as your Python 3 distribution.
+This notebook comes with a requirements.txt file to facilitate the installation of package dependencies. To install the dependencies, launch the following command from the command line before you start the notebook:
+```
+pip3 install -r requirements.txt
+```
 
 ## Multimodal Analysis and Enrichment of a Library Metadata Corpus
 
