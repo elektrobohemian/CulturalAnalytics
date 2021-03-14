@@ -30,3 +30,7 @@ analysis*/
 
 # Python Venv
 venv/
+test_dummy.ipynb
+
+# Jetbrains
+.idea
