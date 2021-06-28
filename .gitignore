@@ -1,3 +1,5 @@
+.idea/*
+secret/*
 **/*.tif
 **/*.json
 **/*.csv
