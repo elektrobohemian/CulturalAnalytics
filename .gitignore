@@ -1,3 +1,4 @@
+secret/*
 **/*.tif
 **/*.json
 **/*.csv
@@ -33,4 +34,4 @@ venv/
 test_dummy.ipynb
 
 # Jetbrains
-.idea
+.idea/*
