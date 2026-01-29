@@ -38,6 +38,15 @@
             }
 
             dict[dec] = !dict[dec];
+
+            //console.log("Toggled decade " + dec + " to " + dict[dec]);
+            if (dict[dec]) {
+                //console.log("Currently visible");
+                 eval("$('#"+dec+"').css({'color': '#000000'})");
+            } else {
+                //console.log("Currently hidden");
+                eval("$('#"+dec+"').css({'color': '#FF0000'})");
+            }
         }
 
         function showAll() {
@@ -54,6 +63,11 @@
             dict[2000] = true;
             dict[2010] = true;
             dict[2020] = true;
+
+            // iterate over all decade buttons and set color to black
+            for (const [dec, value] of Object.entries(dict)) {
+                eval("$('#"+dec+"').css({'color': '#000000'})");
+            }
 
             $('.1900').css({
                 'visibility': 'visible'
@@ -139,32 +153,32 @@
 <body>
 
     <h1>Abilities
-    <button type="button" onclick="showAll(); renderNetworkGraph('force_marvel_abilities.json');">All</button>
+    <button type="button" onclick="showAll(); renderNetworkGraph('./dc/force.json');">All</button>
 
-    <button type="button" onclick="toggleVisibilityPerDecade(1900);">1900</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(1910);">1910</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(1920);">1920</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(1930);">1930</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(1940);">1940</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(1950);">1950</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(1960);">1960</button>
+    <button type="button" id="1900" onclick="toggleVisibilityPerDecade(1900);">1900</button>
+    <button type="button" id="1910" onclick="toggleVisibilityPerDecade(1910);">1910</button>
+    <button type="button" id="1920" onclick="toggleVisibilityPerDecade(1920);">1920</button>
+    <button type="button" id="1930" onclick="toggleVisibilityPerDecade(1930);">1930</button>
+    <button type="button" id="1940" onclick="toggleVisibilityPerDecade(1940);">1940</button>
+    <button type="button" id="1950" onclick="toggleVisibilityPerDecade(1950);">1950</button>
+    <button type="button" id="1960" onclick="toggleVisibilityPerDecade(1960);">1960</button>
 
-    <button type="button" onclick="toggleVisibilityPerDecade(1970);">1970</button>
+    <button type="button" id="1970" onclick="toggleVisibilityPerDecade(1970);">1970</button>
     <!--<button type="button" onclick="d1970==true?$('.1970').css({'visibility': 'hidden'}):$('.1970').css({'visibility': 'visible'}); d1970=!d1970;">1970_ORIG</button>-->
 
-    <button type="button" onclick="toggleVisibilityPerDecade(1980);">1980</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(1990);">1990</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(2000);">2000</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(2010);">2010</button>
-    <button type="button" onclick="toggleVisibilityPerDecade(2020);">Unknown first appearance</button>
+    <button type="button" id="1980" onclick="toggleVisibilityPerDecade(1980);">1980</button>
+    <button type="button" id="1990" onclick="toggleVisibilityPerDecade(1990);">1990</button>
+    <button type="button" id="2000" onclick="toggleVisibilityPerDecade(2000);">2000</button>
+    <button type="button" id="2010" onclick="toggleVisibilityPerDecade(2010);">2010</button>
+    <button type="button" id="2020" onclick="toggleVisibilityPerDecade(2020);">Unknown first appearance</button>
         
-    <button type="button" onclick="saveSVG();">Save</button>
+    <!--<button type="button" onclick="saveSVG();">Save</button>-->
 
     <button type="button" onclick="$('.labels').css({'visibility': 'visible'}); visibleLabels=true;">
-        On</button>
+        Labels on</button>
 
     <button type="button" onclick="$('.labels').css({'visibility': 'hidden'}); visibleLabels=false;">
-        Off</button>
+        Labels Off</button>
         <br />
         <div id="barchart"></div>
         </h1>

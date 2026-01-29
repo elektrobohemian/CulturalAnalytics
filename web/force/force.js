@@ -6,6 +6,8 @@ fill = d3.scale.category20();
 
 function renderNetworkGraph(jsonFileName) {
     d3.select("#chart").selectAll("*").remove();
+    // debug
+    //console.info("Rendering JSON from: " + jsonFileName);
 
     var vis = d3.select("#chart")
         .append("svg:svg")
@@ -13,11 +15,16 @@ function renderNetworkGraph(jsonFileName) {
         .attr("height", h);
 
     d3.json(jsonFileName, function (json) {
+        // debug
+        //console.info("JSON loaded:", jsonFileName);
+        //console.info(json);
+
         var force = d3.layout.force()
             .charge(-120)
             .linkDistance(30)
             .nodes(json.nodes)
-            .links(json.links)
+            /*.links(json.links)*/
+            .links(json.edges)
             .size([w, h])
             .start();
 
@@ -30,7 +37,7 @@ function renderNetworkGraph(jsonFileName) {
         }
 
         var link = vis.selectAll("line.link")
-            .data(json.links)
+            .data(json.edges)
             .enter().append("svg:line")
             //.attr("class", "link")
             .attr("class", function (d) {
