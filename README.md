@@ -37,19 +37,22 @@ Make sure that you are running the following commands from within the `container
 ```
 podman build  -t ibi_runtime . 
 ```
+
+This will take some time as it will build everything from scratch.
+
 #### Running the Container
 
 After the creation of the image, you are set to run the container by executing the following command:
 ```
 podman run  -p 127.0.0.1:8888:8888 -p 127.0.0.1:8000:8000 -i -t localhost/ibi_runtime
 ```
-This command will ensure that you can access the Jupyter notebook under http://localhost:8888/notebooks/WikipediaTest.ipynb and the web server that can be launched from within the notebook under XXX .
+This command will ensure that you can access the Jupyter notebook under http://localhost:8888/notebooks/WikipediaTest.ipynb and the web server that can be launched from within the notebook under port 8000. The address `127.0.0.1` is represented by `localhost`.
 
-Furthermore, it will open a terminal connection to the container in order to display all log output from Jupyter.
+Furthermore, the command will open a terminal connection to the container in order to display all log output from Jupyter and launch the notebook automatically.
 
 #### Stopping the Container
 
-To stop the container, activate the terminal running Jupyter and press `CTRL+C`. You will be asked immediately if you want to shut down the Jupyter server. Enter `y` and Jupyter will shut down. 
+To stop the container, you can use the `shut down` entry from Jupyter's `File` menu or activate the terminal running Jupyter and press `CTRL+C`. You will then be asked immediately if you want to shut down the Jupyter server. Enter `y` and Jupyter will shut down. 
 
 After the server has been stopped, the container will exit as well.
 
