@@ -26,6 +26,16 @@ def load_url(path):
     httpd.stop()
     print("To restart server run: \n%s"%server)
 
+def load_url(path,hostName, port):
+    print("Webserver working directory: "+os.getcwd())
+    sys.stdout.flush()
+    PORT = port
+    httpd = StoppableHTTPServer((hostName,PORT), handler)
+    thread.start_new_thread(httpd.serve, ())
+    webbrowser.open_new('http://localhost:%s/%s'%(PORT,path))
+    input("Press <RETURN> to stop server\n")
+    httpd.stop()
+    print("To restart server run: \n%s"%server)
 
 if sys.version_info[0] == 2:
     import SimpleHTTPServer, BaseHTTPServer
