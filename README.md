@@ -5,7 +5,7 @@ Experiments and tutorials from the wide field of cultural analytics based on tex
 
 ## Analyzing Unstructured Data
 
-![Superheroes teaser image](img/superheros_teaser.jpg)
+![Superheroes teaser image](img/wikipediatest_summary.png)
 
 In this [tutorial](WikipediaTest.ipynb) you will learn to:
 
